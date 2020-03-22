@@ -7,3 +7,7 @@ everything one could want from a table - you have pagination, sorting, search, s
 * a note about the sorting - we have to provide a DataType per column header and then that DataType is used to select a proper comparison function - so naturally the supported data types are String, Number, Date (a normal Date object or an ISO string), Boolean - you can take a look inside the code to see how that is implemented
 
 * if you are copying it make sure to check out styles.scss so that you don't end up wondering why it doesn't look properly
+
+![alt text](https://ibb.co/5TsFnVf)
+![alt text](https://ibb.co/yn9PZ3g)
+![alt text](https://ibb.co/h20STZy)
