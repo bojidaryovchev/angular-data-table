@@ -8,6 +8,6 @@ everything one could want from a table - you have pagination, sorting, search, s
 
 * if you are copying it make sure to check out styles.scss so that you don't end up wondering why it doesn't look properly
 
-![alt text](https://ibb.co/5TsFnVf)
+![alt text](./desktop.png)
 ![alt text](https://ibb.co/yn9PZ3g)
 ![alt text](https://ibb.co/h20STZy)
