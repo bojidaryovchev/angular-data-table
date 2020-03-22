@@ -8,6 +8,10 @@ everything one could want from a table - you have pagination, sorting, search, s
 
 * if you are copying it make sure to check out styles.scss so that you don't end up wondering why it doesn't look properly
 
+### Desktop
 ![alt text](./desktop.png)
+
+### Mobile
 ![alt text](./mobile1.png)
+
 ![alt text](./mobile2.png)
