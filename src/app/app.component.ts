@@ -9,7 +9,7 @@ import { DataType } from './modules/ngdatatable/components/responsive-table/resp
 export class AppComponent implements OnInit {
   tableHeaders = [
     {
-      title: 'Name',
+      title: 'Name and Surname and Something Very Long Blablabla',
       dataType: DataType.String,
       property: 'name'
     },
