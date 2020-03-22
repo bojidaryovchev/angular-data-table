@@ -1,0 +1,98 @@
+<div #responsiveTable class="responsive-table-wrapper" (resized)="onResized()">
+  <div class="responsive-table-search">
+    <div class="responsive-table-search-input">
+      <input #input type="text" placeholder="Search..." (input)="onSearch(input.value)" [style.padding-right]="input.value ? '38px' : ''" />
+
+      <div *ngIf="input.value" class="responsive-table-search-input-clear" (click)="onClear(input)">
+        <div class="responsive-flex-wrapper">
+          <i class="material-icons">close</i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!mobile">
+    <div class="responsive-table" (scroll)="onTableScroll($event)">
+      <div #fixedTableHeaders class="responsive-table-fixed-headers">
+        <div class="responsive-table-header" *ngFor="let tableHeader of tableHeaders; let i = index" (click)="sort(tableHeader, i)">
+          {{ tableHeader.title }}
+
+          <div class="responsive-flex-wrapper">
+            <i class="material-icons">{{ !ascendingByTableHeaderIndex[i] ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</i>
+          </div>
+        </div>
+        <div class="responsive-table-header" *ngIf="selectableObjects">
+          <app-checkbox (checked)="onSelectUnselectAll($event)"></app-checkbox>
+        </div>
+      </div>
+
+      <table>
+        <tr #trTableHeaders class="responsive-table-headers">
+          <th *ngFor="let tableHeader of tableHeaders; let i = index" (click)="sort(tableHeader, i)">
+            <div class="responsive-table-header">
+              {{ tableHeader.title }}
+
+              <div class="responsive-flex-wrapper">
+                <i class="material-icons">{{ !ascendingByTableHeaderIndex[i] ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</i>
+              </div>
+            </div>
+          </th>
+          <th *ngIf="selectableObjects"><app-checkbox (checked)="onSelectUnselectAll($event)"></app-checkbox></th>
+        </tr>
+        <tr *ngFor="let object of getPaginatedObjects()" (click)="onSelectUnselectSingle(getSelectedObjectIndex(object))">
+          <td *ngFor="let property of getObjectEnumeratedProperties(object)">{{ property }}</td>
+
+          <td *ngIf="selectableObjects">
+            <app-checkbox
+              [isChecked]="selectedByObjectIndex[getSelectedObjectIndex(object)]"
+              (checked)="onSelectUnselectSingle(getSelectedObjectIndex(object))"
+            ></app-checkbox>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="mobile">
+    <swiper>
+      <div class="responsive-table-mobile" *ngFor="let tableHeader of tableHeaders; let i = index" (click)="sort(tableHeader, i)">
+        <div
+          class="responsive-table-mobile-row"
+          [style.padding-right]="'calc(10px + ' + calculatePaddingRight() + 'px)'"
+          [style.border-bottom]="'1px solid #e0e0e0'"
+          [style.cursor]="'pointer'"
+        >
+          <div class="responsive-table-mobile-row-content">
+            <strong>{{ tableHeader.title }}</strong>
+            <div class="responsive-flex-wrapper">
+              <i class="material-icons">{{ !ascendingByTableHeaderIndex[i] ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</i>
+            </div>
+          </div>
+          <div class="responsive-table-mobile-row-checkbox" *ngIf="selectableObjects">
+            <app-checkbox [isChecked]="allSelected" (checked)="onSelectUnselectAll($event)" (click)="$event.stopPropagation()"></app-checkbox>
+          </div>
+        </div>
+
+        <div class="responsive-table-mobile-rows">
+          <div
+            #mobileRow
+            class="responsive-table-mobile-row responsive-table-mobile-row-colored"
+            *ngFor="let object of getPaginatedObjects()"
+            (click)="onMobileObjectRowClick($event, getSelectedObjectIndex(object))"
+          >
+            <div class="responsive-table-mobile-row-content">{{ object[tableHeader.property] }}</div>
+
+            <div class="responsive-table-mobile-row-checkbox" *ngIf="selectableObjects">
+              <app-checkbox
+                [isChecked]="selectedByObjectIndex[getSelectedObjectIndex(object)]"
+                (checked)="onSelectUnselectSingle(getSelectedObjectIndex(object))"
+                (click)="$event.stopPropagation()"
+              ></app-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+    </swiper>
+  </ng-container>
+
+  <app-pagination [total]="filteredObjects.length" [limit]="objectsPerPage" (pageChange)="onPageChanged($event)"></app-pagination>
+</div>
