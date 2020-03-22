@@ -170,7 +170,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
         break;
     }
 
-    this.filteredObjects = this.filteredObjects.sort(equalityPredicate);
+    this.filteredObjects.sort(equalityPredicate);
 
     this.ascendingByTableHeaderIndex[tableHeaderIndex] = !this.ascendingByTableHeaderIndex[tableHeaderIndex];
 
@@ -221,11 +221,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   onSelectUnselectAll(selected: boolean): void {
     this.allSelected = selected;
 
-    if (selected) {
-      this.filteredObjects.forEach((_, i) => (this.selectedByObjectIndex[i] = true));
-    } else {
-      this.filteredObjects.forEach((_, i) => (this.selectedByObjectIndex[i] = false));
-    }
+    this.filteredObjects.forEach((_, i) => (this.selectedByObjectIndex[i] = selected));
 
     this.changeDetectorRef.markForCheck();
 
