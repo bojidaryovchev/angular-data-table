@@ -41,10 +41,9 @@ export class TableHeader {
 export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewInit, AfterViewChecked, OnDestroy {
   private readonly _mobileWidth: number = 576;
   private readonly _debounceTime: number = 500;
+  private readonly _defaultObjectsPerPage: number = 14;
 
   private _originalObjects: object[];
-
-  readonly objectsPerPage: number = 14;
 
   @Input() set objects(objects: object[]) {
     this.filteredObjects = objects.slice();
@@ -52,6 +51,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   }
   @Input() tableHeaders: TableHeader[];
   @Input() selectableObjects: boolean = true;
+  @Input() objectsPerPage: number = this._defaultObjectsPerPage;
 
   @Output() objectsSelected: EventEmitter<object[]> = new EventEmitter();
 
