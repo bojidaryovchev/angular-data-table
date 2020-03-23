@@ -41,7 +41,7 @@ export class TableHeader {
 export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewInit, AfterViewChecked, OnDestroy {
   private readonly _mobileWidth: number = 576;
   private readonly _debounceTime: number = 500;
-  private readonly _defaultObjectsPerPage: number = 140;
+  private readonly _defaultObjectsPerPage: number = 14;
 
   private _originalObjects: object[];
 
@@ -59,6 +59,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   @ViewChild('fixedTableHeaders') fixedTableHeaders: ElementRef<HTMLElement>;
   @ViewChild('trTableHeaders') trTableHeaders: ElementRef<HTMLElement>;
   @ViewChildren('mobileRow') mobileRows: QueryList<ElementRef<HTMLElement>>;
+  @ViewChildren('mobileHeader') mobileHeaders: QueryList<ElementRef<HTMLElement>>;
 
   filteredObjects: object[];
   ascendingByTableHeaderIndex: { [key: number]: boolean } = {};
@@ -89,6 +90,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
         this.changeDetectorRef.detectChanges();
 
         if (this.filteredObjects.length) {
+          this.handleMobileHeadersHeights();
           this.handleMobileRowsHeights();
         }
       })
@@ -129,6 +131,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   onResized(): void {
     this.changeDetectorRef.detectChanges();
 
+    this.handleMobileHeadersHeights();
     this.handleMobileRowsHeights();
   }
 
@@ -182,6 +185,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
     this.changeDetectorRef.detectChanges();
 
+    this.handleMobileHeadersHeights();
     this.handleMobileRowsHeights();
   }
 
@@ -202,6 +206,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
     this.changeDetectorRef.detectChanges();
 
+    this.handleMobileHeadersHeights();
     this.handleMobileRowsHeights();
   }
 
@@ -313,6 +318,30 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     return Object.keys(this.selectedByObjectIndex)
       .filter(k => this.selectedByObjectIndex[k])
       .map(k => this.selectedByObjectIndex[k]);
+  }
+
+  private handleMobileHeadersHeights(): void {
+    if (!this.mobile) {
+      return;
+    }
+
+    const mobileHeaders: HTMLElement[] = this.mobileHeaders.toArray().map(mobileHeader => mobileHeader.nativeElement);
+
+    mobileHeaders.forEach(header => (header.style.height = null));
+
+    let highest: number = 0;
+
+    mobileHeaders.forEach(header => {
+      const height: number = header.getBoundingClientRect().height;
+
+      if (height > highest) {
+        highest = height;
+      }
+    });
+
+    mobileHeaders.forEach(header => {
+      header.style.height = `${highest}px`;
+    });
   }
 
   private handleMobileRowsHeights(): void {

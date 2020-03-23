@@ -56,10 +56,9 @@
     <swiper>
       <div class="responsive-table-mobile" *ngFor="let tableHeader of tableHeaders; let i = index" (click)="sort(tableHeader, i)">
         <div
+          #mobileHeader
           class="responsive-table-mobile-row"
           [style.padding-right]="'calc(10px + ' + calculatePaddingRight() + 'px)'"
-          [style.border-bottom]="'1px solid #e0e0e0'"
-          [style.cursor]="'pointer'"
         >
           <div class="responsive-table-mobile-row-content">
             <strong>{{ tableHeader.title }}</strong>
