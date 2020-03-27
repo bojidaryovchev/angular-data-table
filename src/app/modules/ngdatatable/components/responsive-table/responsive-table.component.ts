@@ -52,6 +52,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   @Input() tableHeaders: TableHeader[];
   @Input() selectableObjects: boolean = true;
   @Input() objectsPerPage: number = this._defaultObjectsPerPage;
+  @Input() useSearch: boolean = true;
 
   @Output() objectsSelected: EventEmitter<object[]> = new EventEmitter();
 

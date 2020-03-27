@@ -1,5 +1,5 @@
 <div #responsiveTable class="responsive-table-wrapper" (resized)="onResized()">
-  <div class="responsive-table-search">
+  <div *ngIf="useSearch" class="responsive-table-search">
     <div class="responsive-table-search-input">
       <input #input type="text" placeholder="Search..." (input)="onSearch(input.value)" [style.padding-right]="input.value ? '38px' : ''" />
 
