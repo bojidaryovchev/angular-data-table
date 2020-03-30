@@ -46,6 +46,7 @@
             <app-checkbox
               [isChecked]="selectedByObjectIndex[getSelectedObjectIndex(object)]"
               (checked)="onSelectUnselectSingle(getSelectedObjectIndex(object))"
+              (click)="$event.stopPropagation()"
             ></app-checkbox>
           </td>
         </tr>
