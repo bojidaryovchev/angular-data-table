@@ -7,17 +7,18 @@ import { Component, OnInit, Input, OnChanges, Output, EventEmitter, ChangeDetect
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaginationComponent implements OnInit, OnChanges {
-  readonly totalPages: number = 3;
-  
+  private readonly _defaultShownPagesCount: number = 7;
+
   @Input() total: number;
   @Input() limit: number;
-  @Input() currentPage: number = 0;
-  
+  @Input() shownPagesCount: number = this._defaultShownPagesCount;
+  @Input() currentPage: number = 1;
+
   @Output() pageChange: EventEmitter<number> = new EventEmitter();
 
   pages: number[] = [];
 
-  constructor(private readonly changeDetectorRef: ChangeDetectorRef) { }
+  constructor(private readonly changeDetectorRef: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.initPages();
@@ -27,45 +28,47 @@ export class PaginationComponent implements OnInit, OnChanges {
     this.initPages();
   }
 
+  get totalPagesCount(): number {
+    return Math.floor(this.total / this.limit);
+  }
+
   navigate(page: number) {
-    if (page < 0 || page * this.limit >= this.total) {
+    if (page < 1 || page > this.totalPagesCount) {
       return;
     }
 
-    this.pageChange.emit(page + 1);
-    this.currentPage = page;
+    this.pageChange.emit((this.currentPage = page));
     this.initPages();
     this.changeDetectorRef.markForCheck();
   }
 
   navigateToStart() {
-    this.navigate(0);
+    this.navigate(1);
   }
 
   navigateToEnd() {
-    const totalPages = Math.ceil(this.total / this.limit);
-
-    this.navigate(totalPages ? totalPages - 1 : 0);
+    this.navigate(this.totalPagesCount || 1);
   }
 
   private initPages() {
     if (!this.total || !this.limit) {
       return;
     }
-    
+
     this.pages = [];
 
-    const pagesCount = Math.ceil(this.total / this.limit);
+    let delta: number = 0;
 
-    let i = this.currentPage ? this.currentPage - Math.floor(this.totalPages / 2) : 0;
-
-    if (pagesCount - this.currentPage <= Math.floor(this.totalPages / 2)) {
-      i = pagesCount - this.totalPages;
-      i = i < 0 ? 0 : i;
+    if (this.currentPage <= Math.floor(this.shownPagesCount / 2)) {
+      delta = this.currentPage - 1;
+    } else if (this.currentPage > this.totalPagesCount - Math.floor(this.shownPagesCount / 2)) {
+      delta = 2 * Math.floor(this.shownPagesCount / 2) + this.currentPage - this.totalPagesCount;
+    } else {
+      delta = Math.floor(this.shownPagesCount / 2);
     }
 
-    for (let pages = 0; pages < this.totalPages && i < pagesCount; i++, pages++) {
-      this.pages.push(i);
+    for (let page = this.currentPage - delta, pagesCount = 0; page <= this.totalPagesCount && pagesCount < this.shownPagesCount; page++, pagesCount++) {
+      this.pages.push(page);
     }
   }
 }

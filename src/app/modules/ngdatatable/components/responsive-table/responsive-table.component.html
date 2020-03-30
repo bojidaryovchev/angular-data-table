@@ -94,5 +94,5 @@
     </swiper>
   </ng-container>
 
-  <app-pagination [total]="filteredObjects.length" [limit]="objectsPerPage" (pageChange)="onPageChanged($event)"></app-pagination>
+  <app-pagination [currentPage]="page" [total]="filteredObjects.length" [limit]="objectsPerPage" (pageChange)="onPageChanged($event)"></app-pagination>
 </div>

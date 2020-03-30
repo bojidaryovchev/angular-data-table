@@ -402,5 +402,5 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     for (let index = 0; index < trTableHeaders.length; index++) {
       fixedTableHeaders[index].style.minWidth = `${trTableHeaders[index].getBoundingClientRect().width}px`;
     }
-  }  
+  }
 }

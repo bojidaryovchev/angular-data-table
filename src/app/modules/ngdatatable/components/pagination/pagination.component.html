@@ -9,7 +9,7 @@
       <i class="material-icons">keyboard_arrow_left</i>
     </div>
   </div>
-  <div class="page-wrapper" *ngFor="let page of pages" (click)="navigate(page)" [class.selected]="currentPage === page">{{ page + 1 }}</div>
+  <div class="page-wrapper" *ngFor="let page of pages" (click)="navigate(page)" [class.selected]="currentPage === page">{{ page }}</div>
   <div class="page-wrapper" (click)="navigate(currentPage + 1)">
     <div class="responsive-flex-wrapper">
       <i class="material-icons">keyboard_arrow_right</i>
