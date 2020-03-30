@@ -59,10 +59,9 @@ export class PaginationComponent implements OnInit, OnChanges {
 
     let i = this.currentPage ? this.currentPage - Math.floor(this.totalPages / 2) : 0;
 
-    i = i < 0 ? 0 : i;
-
     if (pagesCount - this.currentPage <= Math.floor(this.totalPages / 2)) {
       i = pagesCount - this.totalPages;
+      i = i < 0 ? 0 : i;
     }
 
     for (let pages = 0; pages < this.totalPages && i < pagesCount; i++, pages++) {
