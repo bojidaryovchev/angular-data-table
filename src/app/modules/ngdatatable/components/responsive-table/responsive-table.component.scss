@@ -6,6 +6,7 @@
 
   .responsive-table-search {
     padding: 10px;
+    border-top: 1px solid #e0e0e0;
     border-bottom: 1px solid #e0e0e0;
 
     .responsive-table-search-input {
@@ -49,6 +50,7 @@
     .responsive-table-header {
       display: flex;
       align-items: center;
+      height: 100%;
     }
   }
 
@@ -70,7 +72,7 @@
     .responsive-table-header {
       min-width: 180px;
       font-weight: 600;
-      padding: 10px;
+      padding: 0 10px;
       border-bottom: 1px solid #e0e0e0;
       cursor: pointer;
       white-space: nowrap;
@@ -171,5 +173,6 @@
   app-pagination {
     padding: 10px;
     border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
   }
 }
