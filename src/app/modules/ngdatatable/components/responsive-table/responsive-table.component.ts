@@ -73,29 +73,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   constructor(private readonly changeDetectorRef: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.subscriptions.push(
-      this.searchSubject.pipe(debounceTime(this._debounceTime)).subscribe(value => {
-        if (!value) {
-          this.filteredObjects = this._originalObjects.slice();
-        } else {
-          this.filteredObjects = this._originalObjects.filter(o => {
-            return Object.keys(o)
-              .map(k => o[k])
-              .find(v => `${v}`.toLowerCase().startsWith(value.toLowerCase()));
-          });
-        }
-
-        // first change detection rerenders the items
-        this.changeDetectorRef.detectChanges();
-        // second change detection updates the scroll padding calculation
-        this.changeDetectorRef.detectChanges();
-
-        if (this.filteredObjects.length) {
-          this.handleMobileHeadersHeights();
-          this.handleMobileRowsHeights();
-        }
-      })
-    );
+    this.initSearchSubject();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -321,6 +299,39 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       .map(k => this.selectedByObjectIndex[k]);
   }
 
+  private initSearchSubject(): void {
+    this.subscriptions.push(
+      this.searchSubject.pipe(debounceTime(this._debounceTime)).subscribe(value => {
+        this.executeSearch(value);
+      })
+    );
+  }
+
+  private executeSearch(value: string) {
+    if (!value) {
+      this.filteredObjects = this._originalObjects.slice();
+    } else {
+      this.filteredObjects = this._originalObjects.filter(o => {
+        return Object.keys(o)
+          .map(k => o[k])
+          .find(v => `${v}`.toLowerCase().startsWith(value.toLowerCase()));
+      });
+    }
+
+    // go back to page 1
+    this.page = 1;
+
+    // first change detection rerenders the items
+    this.changeDetectorRef.detectChanges();
+    // second change detection updates the scroll padding calculation
+    this.changeDetectorRef.detectChanges();
+
+    if (this.filteredObjects.length) {
+      this.handleMobileHeadersHeights();
+      this.handleMobileRowsHeights();
+    }
+  }
+
   private handleMobileHeadersHeights(): void {
     if (!this.mobile) {
       return;
@@ -391,5 +402,5 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     for (let index = 0; index < trTableHeaders.length; index++) {
       fixedTableHeaders[index].style.minWidth = `${trTableHeaders[index].getBoundingClientRect().width}px`;
     }
-  }
+  }  
 }
