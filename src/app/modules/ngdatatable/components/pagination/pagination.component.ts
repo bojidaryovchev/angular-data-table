@@ -7,7 +7,7 @@ import { Component, OnInit, Input, OnChanges, Output, EventEmitter, ChangeDetect
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaginationComponent implements OnInit, OnChanges {
-  private readonly _defaultShownPagesCount: number = 7;
+  private readonly _defaultShownPagesCount: number = 3;
 
   @Input() total: number;
   @Input() limit: number;
