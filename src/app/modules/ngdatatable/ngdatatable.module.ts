@@ -5,6 +5,7 @@ import { SwiperConfigInterface, SwiperModule, SWIPER_CONFIG } from 'ngx-swiper-w
 import { CheckboxComponent } from './components/checkbox/checkbox.component';
 import { PaginationComponent } from './components/pagination/pagination.component';
 import { ResponsiveTableComponent } from './components/responsive-table/responsive-table.component';
+import { SafeHtmlPipe } from './pipes/safeHtml.pipe';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -13,7 +14,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 
 @NgModule({
   imports: [CommonModule, SwiperModule, AngularResizedEventModule],
-  declarations: [PaginationComponent, ResponsiveTableComponent, CheckboxComponent],
+  declarations: [PaginationComponent, ResponsiveTableComponent, CheckboxComponent, SafeHtmlPipe],
   providers: [
     {
       provide: SWIPER_CONFIG,

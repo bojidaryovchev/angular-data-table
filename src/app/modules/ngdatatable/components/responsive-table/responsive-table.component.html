@@ -14,10 +14,14 @@
   <ng-container *ngIf="!mobile">
     <div class="responsive-table" (scroll)="onTableScroll($event)">
       <div #fixedTableHeaders class="responsive-table-fixed-headers">
-        <div class="responsive-table-header" *ngFor="let tableHeader of tableHeaders; let i = index" (click)="sort(tableHeader, i)">
+        <div
+          class="responsive-table-header"
+          *ngFor="let tableHeader of tableHeaders; let i = index"
+          (click)="tableHeader.dataType !== dataType.Color ? sort(tableHeader, i) : undefined"
+        >
           {{ tableHeader.title }}
 
-          <div class="responsive-flex-wrapper">
+          <div class="responsive-flex-wrapper" *ngIf="tableHeader.dataType !== dataType.Color">
             <i class="material-icons">{{ !ascendingByTableHeaderIndex[i] ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</i>
           </div>
         </div>
@@ -28,11 +32,11 @@
 
       <table>
         <tr #trTableHeaders class="responsive-table-headers">
-          <th *ngFor="let tableHeader of tableHeaders; let i = index" (click)="sort(tableHeader, i)">
+          <th *ngFor="let tableHeader of tableHeaders; let i = index" (click)="tableHeader.dataType !== dataType.Color ? sort(tableHeader, i) : undefined">
             <div class="responsive-table-header">
               {{ tableHeader.title }}
 
-              <div class="responsive-flex-wrapper">
+              <div class="responsive-flex-wrapper" *ngIf="tableHeader.dataType !== dataType.Color">
                 <i class="material-icons">{{ !ascendingByTableHeaderIndex[i] ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</i>
               </div>
             </div>
@@ -42,7 +46,16 @@
           </th>
         </tr>
         <tr *ngFor="let object of getPaginatedObjects()" (click)="onSelectUnselectSingle(getSelectedObjectIndex(object))">
-          <td *ngFor="let property of getObjectEnumeratedProperties(object)">{{ property }}</td>
+          <ng-container *ngFor="let property of getObjectEnumeratedProperties(object)">
+            <ng-container *ngIf="property.tableHeader.dataType !== dataType.Color">
+              <td [innerHTML]="property.property | safeHtml"></td>
+            </ng-container>
+            <ng-container *ngIf="property.tableHeader.dataType === dataType.Color">
+              <td>
+                <div class="responsive-table-color" [style.background]="property.property"></div>
+              </td>
+            </ng-container>
+          </ng-container>
 
           <td *ngIf="selectableObjects">
             <app-checkbox
@@ -77,7 +90,14 @@
             *ngFor="let object of getPaginatedObjects()"
             (click)="onMobileObjectRowClick($event, getSelectedObjectIndex(object))"
           >
-            <div class="responsive-table-mobile-row-content">{{ object[tableHeader.property] }}</div>
+            <ng-container *ngIf="tableHeader.dataType !== dataType.Color">
+              <div class="responsive-table-mobile-row-content" [innerHTML]="object[tableHeader.property] | safeHtml"></div>
+            </ng-container>
+            <ng-container *ngIf="tableHeader.dataType === dataType.Color">
+              <div class="responsive-table-mobile-row-content">
+                <div class="responsive-table-color" [style.background]="object[tableHeader.property]"></div>
+              </div>
+            </ng-container>
 
             <div class="responsive-table-mobile-row-checkbox" *ngIf="selectableObjects">
               <app-checkbox

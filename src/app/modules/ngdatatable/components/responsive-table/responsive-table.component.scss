@@ -69,7 +69,7 @@
     z-index: 1;
 
     .responsive-table-header {
-      min-width: 180px;
+      min-width: 90px;
       font-weight: 600;
       padding: 0 10px;
       border-bottom: 1px solid #e0e0e0;
@@ -102,7 +102,7 @@
     }
 
     th {
-      min-width: 180px;
+      min-width: 90px;
       white-space: nowrap;
       height: 42px;
       padding: 0 10px;
@@ -169,6 +169,12 @@
         padding: 0 10px;
       }
     }
+  }
+
+  .responsive-table-color {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
   }
 
   app-pagination {

@@ -23,7 +23,8 @@ export enum DataType {
   String,
   Number,
   Date,
-  Boolean
+  Boolean,
+  Color
 }
 
 export class TableHeader {
@@ -68,9 +69,12 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   selectedByObjectIndex: { [key: number]: boolean } = {};
   allSelected: boolean;
   searchSubject: Subject<string> = new Subject();
+  dataType = DataType;
   subscriptions: Subscription[] = [];
 
-  constructor(private readonly changeDetectorRef: ChangeDetectorRef) {}
+  constructor(private readonly changeDetectorRef: ChangeDetectorRef) {
+    this.changeDetectorRef.detach();
+  }
 
   ngOnInit() {
     this.initSearchSubject();
@@ -88,6 +92,8 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   ngAfterViewInit() {
+    this.changeDetectorRef.detectChanges();
+    
     this.onResized();
   }
 
@@ -168,8 +174,13 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     this.handleMobileRowsHeights();
   }
 
-  getObjectEnumeratedProperties(object: object): string[] {
-    return this.tableHeaders.map(tableHeader => object[tableHeader.property]);
+  getObjectEnumeratedProperties(object: object): { property: string; tableHeader: TableHeader }[] {
+    return this.tableHeaders.map(tableHeader => {
+      return {
+        property: object[tableHeader.property],
+        tableHeader
+      };
+    });
   }
 
   onSearch(value: string): void {
@@ -207,7 +218,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
     this._originalObjects.forEach((_, i) => (this.selectedByObjectIndex[i] = selected));
 
-    this.changeDetectorRef.markForCheck();
+    this.changeDetectorRef.detectChanges();
 
     this.objectsSelected.emit(this.getSelectedObjects());
   }
@@ -215,7 +226,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   onSelectUnselectSingle(index: number): void {
     this.selectedByObjectIndex[index] = !this.selectedByObjectIndex[index];
 
-    this.changeDetectorRef.markForCheck();
+    this.changeDetectorRef.detectChanges();
 
     this.objectsSelected.emit(this.getSelectedObjects());
   }
@@ -402,5 +413,5 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     for (let index = 0; index < trTableHeaders.length; index++) {
       fixedTableHeaders[index].style.minWidth = `${trTableHeaders[index].getBoundingClientRect().width}px`;
     }
-  }  
+  }
 }
