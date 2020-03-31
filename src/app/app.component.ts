@@ -19,6 +19,11 @@ export class AppComponent implements OnInit {
       property: 'age'
     },
     {
+      title: 'Color',
+      dataType: DataType.Color,
+      property: 'color'
+    },
+    {
       title: 'Created',
       dataType: DataType.Date,
       property: 'created'
@@ -55,6 +60,9 @@ export class AppComponent implements OnInit {
     this.tableObjects = this.initObjects(123456);
   }
 
+  private getRandomNumber = max => Math.floor(Math.random() * max);
+  private getRandomColor = () => `rgb(${this.getRandomNumber(256)}, ${this.getRandomNumber(256)}, ${this.getRandomNumber(256)})`;
+
   private initObjects(count: number): object[] {
     const objects = [];
 
@@ -75,6 +83,7 @@ export class AppComponent implements OnInit {
       objects.push({
         name,
         age: Math.floor(Math.random() * index),
+        color: this.getRandomColor(),
         a: Math.floor(Math.random() * index),
         b: Math.floor(Math.random() * index),
         c: Math.floor(Math.random() * index),
