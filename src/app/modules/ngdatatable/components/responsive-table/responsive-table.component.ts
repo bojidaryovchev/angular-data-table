@@ -205,7 +205,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   onSelectUnselectAll(selected: boolean): void {
     this.allSelected = selected;
 
-    this.filteredObjects.forEach((_, i) => (this.selectedByObjectIndex[i] = selected));
+    this._originalObjects.forEach((_, i) => (this.selectedByObjectIndex[i] = selected));
 
     this.changeDetectorRef.markForCheck();
 

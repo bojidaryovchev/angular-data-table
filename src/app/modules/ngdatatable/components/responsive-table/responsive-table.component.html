@@ -37,7 +37,9 @@
               </div>
             </div>
           </th>
-          <th *ngIf="selectableObjects"><app-checkbox (checked)="onSelectUnselectAll($event)"></app-checkbox></th>
+          <th *ngIf="selectableObjects">
+            <app-checkbox (checked)="onSelectUnselectAll($event)"></app-checkbox>
+          </th>
         </tr>
         <tr *ngFor="let object of getPaginatedObjects()" (click)="onSelectUnselectSingle(getSelectedObjectIndex(object))">
           <td *ngFor="let property of getObjectEnumeratedProperties(object)">{{ property }}</td>
@@ -56,11 +58,7 @@
   <ng-container *ngIf="mobile">
     <swiper>
       <div class="responsive-table-mobile" *ngFor="let tableHeader of tableHeaders; let i = index" (click)="sort(tableHeader, i)">
-        <div
-          #mobileHeader
-          class="responsive-table-mobile-row"
-          [style.padding-right]="'calc(10px + ' + calculatePaddingRight() + 'px)'"
-        >
+        <div #mobileHeader class="responsive-table-mobile-row" [style.padding-right]="'calc(10px + ' + calculatePaddingRight() + 'px)'">
           <div class="responsive-table-mobile-row-content">
             <strong>{{ tableHeader.title }}</strong>
             <div class="responsive-flex-wrapper">
