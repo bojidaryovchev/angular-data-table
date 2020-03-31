@@ -14,6 +14,7 @@ export class CheckboxComponent {
   @Output() checked: EventEmitter<boolean> = new EventEmitter();
 
   onChecked(e: Event) {
+    e.preventDefault();
     e.stopPropagation();
     e.stopImmediatePropagation();
 

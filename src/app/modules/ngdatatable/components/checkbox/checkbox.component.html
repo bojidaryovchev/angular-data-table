@@ -1,4 +1,4 @@
-<div #wrapper class="responsive-flex-wrapper">
+<div #wrapper class="responsive-flex-wrapper" (click)="onChecked($event)">
   <label class="check-container">
     <input type="checkbox" [checked]="isChecked" (click)="onChecked($event)" />
     <span class="custom-radio-label checkmark"></span>
