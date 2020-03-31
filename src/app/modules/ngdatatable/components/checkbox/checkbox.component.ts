@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, ElementRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-checkbox',
@@ -7,9 +7,8 @@ import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewCh
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CheckboxComponent {
-  @ViewChild('wrapper') wrapper: ElementRef<HTMLElement>;
-
   @Input() isChecked: boolean;
+  @Input() disabled: boolean;
 
   @Output() checked: EventEmitter<boolean> = new EventEmitter();
 

@@ -75,4 +75,11 @@
     margin: 0;
     padding: 0;
   }
+
+  &.checkbox-disabled > .check-container {
+    .checkmark {
+      background-color: #e0e0e0;
+      border: 2px solid #e0e0e0;
+    }
+  }
 }
