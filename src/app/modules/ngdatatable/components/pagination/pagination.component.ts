@@ -29,7 +29,7 @@ export class PaginationComponent implements OnInit, OnChanges {
   }
 
   get totalPagesCount(): number {
-    return Math.floor(this.total / this.limit);
+    return this.total < this.limit ? 1 : Math.floor(this.total / this.limit);
   }
 
   navigate(page: number) {
