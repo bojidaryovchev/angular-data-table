@@ -26,7 +26,7 @@
           </div>
         </div>
         <div class="responsive-table-header" *ngIf="selectableObjects">
-          <app-checkbox [isChecked]="allSelected" (checked)="onSelectUnselectAll()"></app-checkbox>
+          <app-checkbox [isChecked]="allSelected" (checked)="onSelectUnselectAll($event)"></app-checkbox>
         </div>
       </div>
 
@@ -42,7 +42,7 @@
             </div>
           </th>
           <th *ngIf="selectableObjects">
-            <app-checkbox [isChecked]="allSelected" (checked)="onSelectUnselectAll()"></app-checkbox>
+            <app-checkbox [isChecked]="allSelected" (checked)="onSelectUnselectAll($event)"></app-checkbox>
           </th>
         </tr>
         <tr *ngFor="let object of getPaginatedObjects()" (click)="wholeRowSelection ? onSelectUnselectSingle(object) : onObjectClicked(object)">
@@ -75,7 +75,7 @@
             </div>
           </div>
           <div class="responsive-table-mobile-row-checkbox" *ngIf="selectableObjects">
-            <app-checkbox [isChecked]="allSelected" (checked)="onSelectUnselectAll()" (click)="$event.stopPropagation()"></app-checkbox>
+            <app-checkbox [isChecked]="allSelected" (checked)="onSelectUnselectAll($event)" (click)="$event.stopPropagation()"></app-checkbox>
           </div>
         </div>
 

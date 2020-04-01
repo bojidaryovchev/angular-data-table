@@ -239,8 +239,12 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     return !!this.selectedObjects.find(o => o === object);
   }
 
-  onSelectUnselectAll(): void {
-    this.selectedObjects = this._originalObjects.slice();
+  onSelectUnselectAll(selected: boolean): void {
+    if (selected) {
+      this.selectedObjects = this._originalObjects.slice();
+    } else {
+      this.selectedObjects = [];
+    }
 
     this.changeDetectorRef.detectChanges();
 
