@@ -26,7 +26,7 @@
           </div>
         </div>
         <div class="responsive-table-header" *ngIf="selectableObjects">
-          <app-checkbox (checked)="onSelectUnselectAll($event)"></app-checkbox>
+          <app-checkbox (checked)="onSelectUnselectAll()"></app-checkbox>
         </div>
       </div>
 
@@ -42,13 +42,10 @@
             </div>
           </th>
           <th *ngIf="selectableObjects">
-            <app-checkbox (checked)="onSelectUnselectAll($event)"></app-checkbox>
+            <app-checkbox [isChecked]="allSelected" (checked)="onSelectUnselectAll()"></app-checkbox>
           </th>
         </tr>
-        <tr
-          *ngFor="let object of getPaginatedObjects()"
-          (click)="wholeRowSelection ? onSelectUnselectSingle(getSelectedObjectIndex(object)) : undefined; onObjectClicked(object)"
-        >
+        <tr *ngFor="let object of getPaginatedObjects()" (click)="wholeRowSelection ? onSelectUnselectSingle(object) : onObjectClicked(object)">
           <ng-container *ngFor="let property of getObjectEnumeratedProperties(object)">
             <ng-container *ngIf="property.tableHeader.dataType !== dataType.Color">
               <td [innerHTML]="property.property | safeHtml"></td>
@@ -61,11 +58,7 @@
           </ng-container>
 
           <td *ngIf="selectableObjects">
-            <app-checkbox
-              [isChecked]="selectedByObjectIndex[getSelectedObjectIndex(object)]"
-              (checked)="onSelectUnselectSingle(getSelectedObjectIndex(object))"
-              (click)="$event.stopPropagation()"
-            ></app-checkbox>
+            <app-checkbox [isChecked]="objectIsSelected(object)" (checked)="onSelectUnselectSingle(object)" (click)="$event.stopPropagation()"></app-checkbox>
           </td>
         </tr>
       </table>
@@ -82,7 +75,7 @@
             </div>
           </div>
           <div class="responsive-table-mobile-row-checkbox" *ngIf="selectableObjects">
-            <app-checkbox [isChecked]="allSelected" (checked)="onSelectUnselectAll($event)" (click)="$event.stopPropagation()"></app-checkbox>
+            <app-checkbox [isChecked]="allSelected" (checked)="onSelectUnselectAll()" (click)="$event.stopPropagation()"></app-checkbox>
           </div>
         </div>
 
@@ -91,7 +84,7 @@
             #mobileRow
             class="responsive-table-mobile-row responsive-table-mobile-row-colored"
             *ngFor="let object of getPaginatedObjects()"
-            (click)="wholeRowSelection ? onMobileObjectRowClick($event, getSelectedObjectIndex(object)) : undefined; onObjectClicked(object)"
+            (click)="wholeRowSelection ? onMobileObjectRowClick($event, object) : onObjectClicked(object)"
           >
             <ng-container *ngIf="tableHeader.dataType !== dataType.Color">
               <div class="responsive-table-mobile-row-content" [innerHTML]="object[tableHeader.property] | safeHtml"></div>
@@ -103,11 +96,7 @@
             </ng-container>
 
             <div class="responsive-table-mobile-row-checkbox" *ngIf="selectableObjects">
-              <app-checkbox
-                [isChecked]="selectedByObjectIndex[getSelectedObjectIndex(object)]"
-                (checked)="onSelectUnselectSingle(getSelectedObjectIndex(object))"
-                (click)="$event.stopPropagation()"
-              ></app-checkbox>
+              <app-checkbox [isChecked]="objectIsSelected(object)" (checked)="onSelectUnselectSingle(object)" (click)="$event.stopPropagation()"></app-checkbox>
             </div>
           </div>
         </div>

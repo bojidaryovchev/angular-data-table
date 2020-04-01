@@ -62,6 +62,8 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   // by default you can select an object by clicking anywhere in the row
   // if disabled you will be able to select only by clicking the checkbox
   @Input() wholeRowSelection: boolean = true;
+  // the objects that are currently selected
+  @Input() selectedObjects: object[];
 
   // emits an array of the selected objects
   @Output() objectsSelected: EventEmitter<object[]> = new EventEmitter();
@@ -77,8 +79,6 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   filteredObjects: object[];
   ascendingByTableHeaderIndex: { [key: number]: boolean } = {};
   page: number = 1;
-  selectedByObjectIndex: { [key: number]: boolean } = {};
-  allSelected: boolean;
   searchSubject: Subject<string> = new Subject();
   dataType = DataType;
   subscriptions: Subscription[] = [];
@@ -97,14 +97,13 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     }
 
     if (changes['objects']) {
-      this.initSelectedByObjectIndex();
       this.resort();
     }
   }
 
   ngAfterViewInit() {
     this.changeDetectorRef.detectChanges();
-    
+
     this.onResized();
   }
 
@@ -122,6 +121,14 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     }
 
     return this.responsiveTable.nativeElement.getBoundingClientRect().width <= this._mobileWidth;
+  }
+
+  get allSelected(): boolean {
+    if (!this.selectedObjects) {
+      return false;
+    }
+
+    return this.selectedObjects.length === this._originalObjects.length;
   }
 
   onResized(): void {
@@ -228,32 +235,44 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     this.objectClicked.emit(object);
   }
 
-  onSelectUnselectAll(selected: boolean): void {
-    this.allSelected = selected;
+  objectIsSelected(object): boolean {
+    return !!this.selectedObjects.find(o => o === object);
+  }
 
-    this._originalObjects.forEach((_, i) => (this.selectedByObjectIndex[i] = selected));
+  onSelectUnselectAll(): void {
+    this.selectedObjects = this._originalObjects.slice();
 
     this.changeDetectorRef.detectChanges();
 
-    this.objectsSelected.emit(this.getSelectedObjects());
+    this.objectsSelected.emit(this.selectedObjects);
   }
 
-  onSelectUnselectSingle(index: number): void {
-    this.selectedByObjectIndex[index] = !this.selectedByObjectIndex[index];
+  onSelectUnselectSingle(object: object): void {
+    // O(n)
+    const index = this.selectedObjects.findIndex(o => o === object);
+
+    if (index !== -1) {
+      // O(1)
+      this.selectedObjects[index] = this.selectedObjects[this.selectedObjects.length - 1];
+      this.selectedObjects.pop();
+    } else {
+      this.selectedObjects.push(object);
+    }
 
     this.changeDetectorRef.detectChanges();
 
-    this.objectsSelected.emit(this.getSelectedObjects());
+    this.onObjectClicked(object);
+    this.objectsSelected.emit(this.selectedObjects);
   }
 
-  onMobileObjectRowClick(e: Event, index: number): void {
+  onMobileObjectRowClick(e: Event, object: object): void {
     e.stopPropagation();
     e.stopImmediatePropagation();
 
-    this.onSelectUnselectSingle(index);
+    this.onSelectUnselectSingle(object);
   }
 
-  getSelectedObjectIndex(object: object): number {
+  getObjectIndex(object: object): number {
     return this._originalObjects.findIndex(o => o === object);
   }
 
@@ -311,18 +330,6 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     }
 
     this.sort(this.tableHeaders[descendingIndex], descendingIndex);
-  }
-
-  private initSelectedByObjectIndex(): void {
-    this.selectedByObjectIndex = {};
-
-    this.filteredObjects.forEach((_, i) => (this.selectedByObjectIndex[i] = false));
-  }
-
-  private getSelectedObjects(): object[] {
-    return Object.keys(this.selectedByObjectIndex)
-      .filter(k => this.selectedByObjectIndex[k])
-      .map(k => this.selectedByObjectIndex[k]);
   }
 
   private initSearchSubject(): void {
