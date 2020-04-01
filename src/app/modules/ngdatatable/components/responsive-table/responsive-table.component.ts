@@ -46,16 +46,27 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
   private _originalObjects: object[];
 
+  // the objects you want to display in the table
   @Input() set objects(objects: object[]) {
     this.filteredObjects = objects.slice();
     this._originalObjects = objects.slice();
   }
+  // the table headers you want to display
   @Input() tableHeaders: TableHeader[];
+  // whether or not to show checkboxes
   @Input() selectableObjects: boolean = true;
+  // the count of object per page
   @Input() objectsPerPage: number = this._defaultObjectsPerPage;
+  // whether or not to show the search
   @Input() useSearch: boolean = true;
+  // by default you can select an object by clicking anywhere in the row
+  // if disabled you will be able to select only by clicking the checkbox
+  @Input() wholeRowSelection: boolean = true;
 
+  // emits an array of the selected objects
   @Output() objectsSelected: EventEmitter<object[]> = new EventEmitter();
+  // emits an object when a row is clicked
+  @Output() objectClicked: EventEmitter<object> = new EventEmitter();
 
   @ViewChild('responsiveTable') responsiveTable: ElementRef<HTMLElement>;
   @ViewChild('fixedTableHeaders') fixedTableHeaders: ElementRef<HTMLElement>;
@@ -211,6 +222,10 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     }
 
     return objects;
+  }
+
+  onObjectClicked(object: object) {
+    this.objectClicked.emit(object);
   }
 
   onSelectUnselectAll(selected: boolean): void {

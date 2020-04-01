@@ -45,7 +45,10 @@
             <app-checkbox (checked)="onSelectUnselectAll($event)"></app-checkbox>
           </th>
         </tr>
-        <tr *ngFor="let object of getPaginatedObjects()" (click)="onSelectUnselectSingle(getSelectedObjectIndex(object))">
+        <tr
+          *ngFor="let object of getPaginatedObjects()"
+          (click)="wholeRowSelection ? onSelectUnselectSingle(getSelectedObjectIndex(object)) : undefined; onObjectClicked(object)"
+        >
           <ng-container *ngFor="let property of getObjectEnumeratedProperties(object)">
             <ng-container *ngIf="property.tableHeader.dataType !== dataType.Color">
               <td [innerHTML]="property.property | safeHtml"></td>
@@ -88,7 +91,7 @@
             #mobileRow
             class="responsive-table-mobile-row responsive-table-mobile-row-colored"
             *ngFor="let object of getPaginatedObjects()"
-            (click)="onMobileObjectRowClick($event, getSelectedObjectIndex(object))"
+            (click)="wholeRowSelection ? onMobileObjectRowClick($event, getSelectedObjectIndex(object)) : undefined; onObjectClicked(object)"
           >
             <ng-container *ngIf="tableHeader.dataType !== dataType.Color">
               <div class="responsive-table-mobile-row-content" [innerHTML]="object[tableHeader.property] | safeHtml"></div>
