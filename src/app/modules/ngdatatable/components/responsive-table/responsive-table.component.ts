@@ -74,6 +74,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   @ViewChild('fixedTableHeaders') fixedTableHeaders: ElementRef<HTMLElement>;
   @ViewChild('trTableHeaders') trTableHeaders: ElementRef<HTMLElement>;
   @ViewChildren('mobileRow') mobileRows: QueryList<ElementRef<HTMLElement>>;
+  @ViewChildren('mobileRowsContainer') mobileRowsContainers: QueryList<ElementRef<HTMLElement>>;
   @ViewChildren('mobileHeader') mobileHeaders: QueryList<ElementRef<HTMLElement>>;
 
   filteredObjects: object[];
@@ -274,6 +275,37 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     e.stopImmediatePropagation();
 
     this.onSelectUnselectSingle(object);
+  }
+
+  equalizeMobileRowsContainersScrolls(): void {
+    const mobileRowsContainers = this.mobileRowsContainers.toArray().map(mobileRowsContainer => mobileRowsContainer.nativeElement);
+    
+    let different: boolean = false;
+
+    for (let index = 1; index < mobileRowsContainers.length; index++) {
+      const a: HTMLElement = mobileRowsContainers[index - 1];
+      const b: HTMLElement = mobileRowsContainers[index];
+      
+      if (a.scrollTop !== b.scrollTop) {
+        different = true;
+      }
+    }
+
+    if (!different) {
+      return;
+    }
+
+    let highest: number = 0;
+
+    mobileRowsContainers.forEach(mobileRowsContainer => {
+      if (mobileRowsContainer.scrollTop > highest) {
+        highest = mobileRowsContainer.scrollTop;
+      }
+    });
+
+    mobileRowsContainers.forEach(mobileRowsContainer => {
+      mobileRowsContainer.scrollTop = highest;
+    });
   }
 
   getObjectIndex(object: object): number {

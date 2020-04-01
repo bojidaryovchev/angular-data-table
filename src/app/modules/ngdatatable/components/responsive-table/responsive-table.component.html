@@ -65,7 +65,7 @@
     </div>
   </ng-container>
   <ng-container *ngIf="mobile">
-    <swiper>
+    <swiper (sliderMove)="equalizeMobileRowsContainersScrolls()">
       <div class="responsive-table-mobile" *ngFor="let tableHeader of tableHeaders; let i = index" (click)="sort(tableHeader, i)">
         <div #mobileHeader class="responsive-table-mobile-row" [style.padding-right]="'calc(10px + ' + calculatePaddingRight() + 'px)'">
           <div class="responsive-table-mobile-row-content">
@@ -79,7 +79,7 @@
           </div>
         </div>
 
-        <div class="responsive-table-mobile-rows">
+        <div #mobileRowsContainer class="responsive-table-mobile-rows">
           <div
             #mobileRow
             class="responsive-table-mobile-row responsive-table-mobile-row-colored"
