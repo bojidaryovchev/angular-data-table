@@ -48,8 +48,13 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
   // the objects you want to display in the table
   @Input() set objects(objects: object[]) {
-    this.filteredObjects = objects.slice();
-    this._originalObjects = objects.slice();
+    if (objects) {
+      this.filteredObjects = objects.slice();
+      this._originalObjects = objects.slice();
+    } else {
+      this.filteredObjects = [];
+      this._originalObjects = [];
+    }
   }
   // the table headers you want to display
   @Input() tableHeaders: TableHeader[];
@@ -63,7 +68,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   // if disabled you will be able to select only by clicking the checkbox
   @Input() wholeRowSelection: boolean = true;
   // the objects that are currently selected
-  @Input() selectedObjects: object[];
+  @Input() selectedObjects: object[] = [];
 
   // emits an array of the selected objects
   @Output() objectsSelected: EventEmitter<object[]> = new EventEmitter();
@@ -100,6 +105,10 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     if (changes['objects']) {
       this.resort();
     }
+
+    if (changes['selectedObjects']) {
+      this.handleSelectedObjects();
+    }
   }
 
   ngAfterViewInit() {
@@ -126,9 +135,9 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
   get allSelected(): boolean {
     if (!this.selectedObjects) {
-      return false;
+      return;
     }
-
+    
     return this.selectedObjects.length === this._originalObjects.length;
   }
 
@@ -237,6 +246,10 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   objectIsSelected(object): boolean {
+    if (!this.selectedObjects) {
+      return;
+    }
+
     return !!this.selectedObjects.find(o => o === object);
   }
 
@@ -266,7 +279,6 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
     this.changeDetectorRef.detectChanges();
 
-    this.onObjectClicked(object);
     this.objectsSelected.emit(this.selectedObjects);
   }
 
@@ -470,6 +482,12 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
     for (let index = 0; index < trTableHeaders.length; index++) {
       fixedTableHeaders[index].style.minWidth = `${trTableHeaders[index].getBoundingClientRect().width}px`;
+    }
+  }
+
+  private handleSelectedObjects() {
+    if (!this.selectedObjects) {
+      this.selectedObjects = [];
     }
   }
 }
