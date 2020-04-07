@@ -17,11 +17,11 @@
         <div
           class="responsive-table-header"
           *ngFor="let tableHeader of tableHeaders; let i = index"
-          (click)="tableHeader.dataType !== dataType.Color ? sort(tableHeader, i) : undefined"
+          (click)="tableHeader.dataType !== dataType.Template ? sort(tableHeader, i) : undefined"
         >
           {{ tableHeader.title }}
 
-          <div class="responsive-flex-wrapper" *ngIf="tableHeader.dataType !== dataType.Color">
+          <div class="responsive-flex-wrapper" *ngIf="tableHeader.dataType !== dataType.Template">
             <i class="material-icons">{{ !ascendingByTableHeaderIndex[i] ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</i>
           </div>
         </div>
@@ -32,11 +32,11 @@
 
       <table>
         <tr #trTableHeaders class="responsive-table-headers">
-          <th *ngFor="let tableHeader of tableHeaders; let i = index" (click)="tableHeader.dataType !== dataType.Color ? sort(tableHeader, i) : undefined">
+          <th *ngFor="let tableHeader of tableHeaders; let i = index" (click)="tableHeader.dataType !== dataType.Template ? sort(tableHeader, i) : undefined">
             <div class="responsive-table-header">
               {{ tableHeader.title }}
 
-              <div class="responsive-flex-wrapper" *ngIf="tableHeader.dataType !== dataType.Color">
+              <div class="responsive-flex-wrapper" *ngIf="tableHeader.dataType !== dataType.Template">
                 <i class="material-icons">{{ !ascendingByTableHeaderIndex[i] ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</i>
               </div>
             </div>
@@ -47,12 +47,12 @@
         </tr>
         <tr *ngFor="let object of getPaginatedObjects()" (click)="wholeRowSelection ? onSelectUnselectSingle(object) : onObjectClicked(object)">
           <ng-container *ngFor="let property of getObjectEnumeratedProperties(object)">
-            <ng-container *ngIf="property.tableHeader.dataType !== dataType.Color">
+            <ng-container *ngIf="property.tableHeader.dataType !== dataType.Template">
               <td [innerHTML]="property.property | safeHtml"></td>
             </ng-container>
-            <ng-container *ngIf="property.tableHeader.dataType === dataType.Color">
+            <ng-container *ngIf="property.tableHeader.dataType === dataType.Template">
               <td>
-                <div class="responsive-table-color" [style.background]="property.property"></div>
+                <ng-template [ngTemplateOutlet]="property.tableHeader.template" [ngTemplateOutletContext]="object"></ng-template>
               </td>
             </ng-container>
           </ng-container>
@@ -86,12 +86,12 @@
             *ngFor="let object of getPaginatedObjects()"
             (click)="wholeRowSelection ? onMobileObjectRowClick($event, object) : onObjectClicked(object)"
           >
-            <ng-container *ngIf="tableHeader.dataType !== dataType.Color">
+            <ng-container *ngIf="tableHeader.dataType !== dataType.Template">
               <div class="responsive-table-mobile-row-content" [innerHTML]="object[tableHeader.property] | safeHtml"></div>
             </ng-container>
-            <ng-container *ngIf="tableHeader.dataType === dataType.Color">
+            <ng-container *ngIf="tableHeader.dataType === dataType.Template">
               <div class="responsive-table-mobile-row-content">
-                <div class="responsive-table-color" [style.background]="object[tableHeader.property]"></div>
+                <ng-template [ngTemplateOutlet]="tableHeader.template" [ngTemplateOutletContext]="object"></ng-template>
               </div>
             </ng-container>
 

@@ -1,1 +1,5 @@
+<ng-template #template let-name="name">
+  <button class="btn btn-success" style="white-space: nowrap;">{{ name.substr(0, 20) }}</button>
+</ng-template>
+
 <app-responsive-table [tableHeaders]="tableHeaders" [objects]="tableObjects"></app-responsive-table>

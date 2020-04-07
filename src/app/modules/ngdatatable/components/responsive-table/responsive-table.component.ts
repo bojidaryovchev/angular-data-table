@@ -14,7 +14,8 @@ import {
   QueryList,
   SimpleChanges,
   ViewChild,
-  ViewChildren
+  ViewChildren,
+  TemplateRef
 } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -24,13 +25,14 @@ export enum DataType {
   Number,
   Date,
   Boolean,
-  Color
+  Template
 }
 
 export class TableHeader {
   title: string;
   dataType: DataType;
-  property: string;
+  property?: string;
+  template?: TemplateRef<ElementRef<HTMLElement>>;
 }
 
 @Component({
