@@ -100,10 +100,6 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['tableHeaders']) {
-      this.initAscendingByTableHeaderIndex();
-    }
-
     if (changes['objects']) {
       this.resort();
     }
@@ -360,14 +356,6 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       this.trTableHeaders.nativeElement.classList.remove('responsive-table-headers-invisible');
       this.fixedTableHeaders.nativeElement.classList.remove('responsive-table-fixed-headers-visible');
     }
-  }
-
-  private initAscendingByTableHeaderIndex(): void {
-    this.ascendingByTableHeaderIndex = {};
-
-    this.tableHeaders.forEach((_, index) => {
-      this.ascendingByTableHeaderIndex[index] = true;
-    });
   }
 
   private resort(): void {
