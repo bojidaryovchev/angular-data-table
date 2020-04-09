@@ -109,6 +109,8 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     if (changes['selectedObjects']) {
       this.handleSelectedObjects();
     }
+
+    this.changeDetectorRef.detectChanges();
   }
 
   ngAfterViewInit() {
@@ -134,7 +136,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   get allSelected(): boolean {
-    if (!this.selectedObjects) {
+    if (!this.selectedObjects || !this.selectedObjects.length) {
       return;
     }
 

@@ -16,7 +16,7 @@
       <div #fixedTableHeaders class="responsive-table-fixed-headers">
         <div
           class="responsive-table-header"
-          *ngFor="let tableHeader of tableHeaders; let i = index"
+          *ngFor="let tableHeader of tableHeaders; let i = index; trackBy: headersTrackByFn"
           (click)="tableHeader.dataType !== dataType.Template ? sort(tableHeader, i) : undefined"
         >
           {{ tableHeader.title }}
