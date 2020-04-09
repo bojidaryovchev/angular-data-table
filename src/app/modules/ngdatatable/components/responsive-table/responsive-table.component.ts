@@ -445,6 +445,10 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       return;
     }
 
+    if (this.filteredObjects.length <= this.objectsPerPage) {
+      return;
+    }
+
     const mobileRows: HTMLElement[] = this.mobileRows.toArray().map((mobileRow) => mobileRow.nativeElement);
 
     mobileRows.forEach((row) => (row.style.height = null));
