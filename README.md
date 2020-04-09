@@ -8,6 +8,8 @@ everything one could want from a table - you have pagination, sorting, search, s
 
 * if you are copying it make sure to check out styles.scss so that you don't end up wondering why it doesn't look properly
 
+* you can pass in a template to be rendered by header and the ngOutletContext object for the template would be the actual row object - see how we pass a template in the app.component.html and app.component.ts (notice ViewChild static true - the other approach would be to just pass the template through the html - I personally like keeping inputs in the ts)
+
 ### Desktop
 ![alt text](./desktop.png)
 
