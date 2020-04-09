@@ -13,10 +13,11 @@ import {
   Output,
   QueryList,
   SimpleChanges,
+  TemplateRef,
   ViewChild,
   ViewChildren,
-  TemplateRef
 } from '@angular/core';
+import { SwiperComponent } from 'ngx-swiper-wrapper';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -25,7 +26,7 @@ export enum DataType {
   Number,
   Date,
   Boolean,
-  Template
+  Template,
 }
 
 export class TableHeader {
@@ -39,7 +40,7 @@ export class TableHeader {
   selector: 'app-responsive-table',
   templateUrl: './responsive-table.component.html',
   styleUrls: ['./responsive-table.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewInit, AfterViewChecked, OnDestroy {
   private readonly _mobileWidth: number = 576;
@@ -80,6 +81,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   @ViewChild('responsiveTable') responsiveTable: ElementRef<HTMLElement>;
   @ViewChild('fixedTableHeaders') fixedTableHeaders: ElementRef<HTMLElement>;
   @ViewChild('trTableHeaders') trTableHeaders: ElementRef<HTMLElement>;
+  @ViewChild(SwiperComponent) swiper: SwiperComponent;
   @ViewChildren('mobileRow') mobileRows: QueryList<ElementRef<HTMLElement>>;
   @ViewChildren('mobileRowsContainer') mobileRowsContainers: QueryList<ElementRef<HTMLElement>>;
   @ViewChildren('mobileHeader') mobileHeaders: QueryList<ElementRef<HTMLElement>>;
@@ -116,11 +118,11 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   ngAfterViewChecked() {
-    this.equalizeHeadersWidths();
+    this.equalizeDesktopHeadersWidths();
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
   get mobile(): boolean {
@@ -135,8 +137,28 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     if (!this.selectedObjects) {
       return;
     }
-    
+
     return this.selectedObjects.length === this._originalObjects.length;
+  }
+
+  get paddingRight(): number {
+    if (!this.mobileRows.first) {
+      return 0;
+    }
+
+    if (!this.mobileRows.first.nativeElement.getBoundingClientRect().width) {
+      return 0;
+    }
+
+    return this.responsiveTable.nativeElement.getBoundingClientRect().width - this.mobileRows.first.nativeElement.getBoundingClientRect().width;
+  }
+
+  get swiperIndex(): number {
+    if (!this.swiper) {
+      return;
+    }
+
+    return this.swiper.directiveRef.getIndex();
   }
 
   onResized(): void {
@@ -189,8 +211,8 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     this.ascendingByTableHeaderIndex[tableHeaderIndex] = !this.ascendingByTableHeaderIndex[tableHeaderIndex];
 
     Object.keys(this.ascendingByTableHeaderIndex)
-      .filter(i => +i !== tableHeaderIndex)
-      .forEach(i => {
+      .filter((i) => +i !== tableHeaderIndex)
+      .forEach((i) => {
         this.ascendingByTableHeaderIndex[i] = false;
       });
 
@@ -201,10 +223,10 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   getObjectEnumeratedProperties(object: object): { property: string; tableHeader: TableHeader }[] {
-    return this.tableHeaders.map(tableHeader => {
+    return this.tableHeaders.map((tableHeader) => {
       return {
         property: object[tableHeader.property],
-        tableHeader
+        tableHeader,
       };
     });
   }
@@ -248,7 +270,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       return;
     }
 
-    return !!this.selectedObjects.find(o => o === object);
+    return !!this.selectedObjects.find((o) => o === object);
   }
 
   onSelectUnselectAll(selected: boolean): void {
@@ -265,7 +287,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
   onSelectUnselectSingle(object: object): void {
     // O(n)
-    const index = this.selectedObjects.findIndex(o => o === object);
+    const index = this.selectedObjects.findIndex((o) => o === object);
 
     if (index !== -1) {
       // O(1)
@@ -287,51 +309,8 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     this.onSelectUnselectSingle(object);
   }
 
-  equalizeMobileRowsContainersScrolls(): void {
-    const mobileRowsContainers = this.mobileRowsContainers.toArray().map(mobileRowsContainer => mobileRowsContainer.nativeElement);
-    
-    let different: boolean = false;
-
-    for (let index = 1; index < mobileRowsContainers.length; index++) {
-      const a: HTMLElement = mobileRowsContainers[index - 1];
-      const b: HTMLElement = mobileRowsContainers[index];
-      
-      if (a.scrollTop !== b.scrollTop) {
-        different = true;
-      }
-    }
-
-    if (!different) {
-      return;
-    }
-
-    let highest: number = 0;
-
-    mobileRowsContainers.forEach(mobileRowsContainer => {
-      if (mobileRowsContainer.scrollTop > highest) {
-        highest = mobileRowsContainer.scrollTop;
-      }
-    });
-
-    mobileRowsContainers.forEach(mobileRowsContainer => {
-      mobileRowsContainer.scrollTop = highest;
-    });
-  }
-
   getObjectIndex(object: object): number {
-    return this._originalObjects.findIndex(o => o === object);
-  }
-
-  calculatePaddingRight(): number {
-    if (!this.mobileRows.first) {
-      return 0;
-    }
-
-    if (!this.mobileRows.first.nativeElement.getBoundingClientRect().width) {
-      return 0;
-    }
-
-    return this.responsiveTable.nativeElement.getBoundingClientRect().width - this.mobileRows.first.nativeElement.getBoundingClientRect().width;
+    return this._originalObjects.findIndex((o) => o === object);
   }
 
   onTableScroll(e: Event): void {
@@ -358,10 +337,24 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     }
   }
 
+  headersTrackByFn(index: number): number {
+    return index;
+  }
+
+  rowsTrackBy(index: number, object: object): number {
+    return this.getObjectIndex(object);
+  }
+
+  rowsTrackByFn = this.rowsTrackBy.bind(this);
+
+  onSliderMove() {
+    this.equalizeMobileRowsAdjacentContainersScrolls();
+  }
+
   private resort(): void {
     const descendingIndex: number = Object.keys(this.ascendingByTableHeaderIndex)
-      .map(k => this.ascendingByTableHeaderIndex[k])
-      .findIndex(ascending => !ascending);
+      .map((k) => this.ascendingByTableHeaderIndex[k])
+      .findIndex((ascending) => !ascending);
 
     if (descendingIndex === -1) {
       return;
@@ -372,7 +365,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
   private initSearchSubject(): void {
     this.subscriptions.push(
-      this.searchSubject.pipe(debounceTime(this._debounceTime)).subscribe(value => {
+      this.searchSubject.pipe(debounceTime(this._debounceTime)).subscribe((value) => {
         this.executeSearch(value);
       })
     );
@@ -382,25 +375,45 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     if (!value) {
       this.filteredObjects = this._originalObjects.slice();
     } else {
-      this.filteredObjects = this._originalObjects.filter(o => {
+      this.filteredObjects = this._originalObjects.filter((o) => {
         return Object.keys(o)
-          .map(k => o[k])
-          .find(v => `${v}`.toLowerCase().startsWith(value.toLowerCase()));
+          .map((k) => o[k])
+          .find((v) => `${v}`.toLowerCase().startsWith(value.toLowerCase()));
       });
     }
 
     // go back to page 1
     this.page = 1;
 
-    // first change detection rerenders the items
     this.changeDetectorRef.detectChanges();
-    // second change detection updates the scroll padding calculation
-    this.changeDetectorRef.detectChanges();
+  }
 
-    if (this.filteredObjects.length) {
-      this.handleMobileHeadersHeights();
-      this.handleMobileRowsHeights();
+  private equalizeMobileRowsAdjacentContainersScrolls() {
+    const mobileRowsContainersArray = this.mobileRowsContainers.toArray();
+    const mobileRowsContainers = mobileRowsContainersArray
+      .filter((_, i) => i === this.swiperIndex || i === this.swiperIndex - 1 || i === this.swiperIndex + 1)
+      .map((mobileRowsContainer) => mobileRowsContainer.nativeElement);
+
+    let different: boolean = false;
+
+    for (let index = 1; index < mobileRowsContainers.length; index++) {
+      const a: HTMLElement = mobileRowsContainers[index - 1];
+      const b: HTMLElement = mobileRowsContainers[index];
+
+      if (a.scrollTop !== b.scrollTop) {
+        different = true;
+      }
     }
+
+    if (!different) {
+      return;
+    }
+
+    let scrollTop: number = mobileRowsContainersArray[this.swiperIndex].nativeElement.scrollTop;
+
+    mobileRowsContainers.forEach((mobileRowsContainer) => {
+      mobileRowsContainer.scrollTop = scrollTop;
+    });
   }
 
   private handleMobileHeadersHeights(): void {
@@ -408,13 +421,13 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       return;
     }
 
-    const mobileHeaders: HTMLElement[] = this.mobileHeaders.toArray().map(mobileHeader => mobileHeader.nativeElement);
+    const mobileHeaders: HTMLElement[] = this.mobileHeaders.toArray().map((mobileHeader) => mobileHeader.nativeElement);
 
-    mobileHeaders.forEach(header => (header.style.height = null));
+    mobileHeaders.forEach((header) => (header.style.height = null));
 
     let highest: number = 0;
 
-    mobileHeaders.forEach(header => {
+    mobileHeaders.forEach((header) => {
       const height: number = header.getBoundingClientRect().height;
 
       if (height > highest) {
@@ -422,7 +435,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       }
     });
 
-    mobileHeaders.forEach(header => {
+    mobileHeaders.forEach((header) => {
       header.style.height = `${highest}px`;
     });
   }
@@ -432,9 +445,9 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       return;
     }
 
-    const mobileRows: HTMLElement[] = this.mobileRows.toArray().map(mobileRow => mobileRow.nativeElement);
+    const mobileRows: HTMLElement[] = this.mobileRows.toArray().map((mobileRow) => mobileRow.nativeElement);
 
-    mobileRows.forEach(row => (row.style.height = null));
+    mobileRows.forEach((row) => (row.style.height = null));
 
     const totalPages = Math.floor(this._originalObjects.length / this.objectsPerPage);
     const objectsPerPage = this.page <= totalPages ? this.objectsPerPage : this._originalObjects.length - totalPages * this.objectsPerPage;
@@ -458,7 +471,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     }
   }
 
-  private equalizeHeadersWidths(): void {
+  private equalizeDesktopHeadersWidths(): void {
     if (this.mobile) {
       return;
     }

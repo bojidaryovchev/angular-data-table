@@ -32,7 +32,10 @@
 
       <table>
         <tr #trTableHeaders class="responsive-table-headers">
-          <th *ngFor="let tableHeader of tableHeaders; let i = index" (click)="tableHeader.dataType !== dataType.Template ? sort(tableHeader, i) : undefined">
+          <th
+            *ngFor="let tableHeader of tableHeaders; let i = index; trackBy: headersTrackByFn"
+            (click)="tableHeader.dataType !== dataType.Template ? sort(tableHeader, i) : undefined"
+          >
             <div class="responsive-table-header">
               {{ tableHeader.title }}
 
@@ -45,7 +48,10 @@
             <app-checkbox [isChecked]="allSelected" (checked)="onSelectUnselectAll($event)"></app-checkbox>
           </th>
         </tr>
-        <tr *ngFor="let object of getPaginatedObjects()" (click)="wholeRowSelection ? onSelectUnselectSingle(object) : onObjectClicked(object)">
+        <tr
+          *ngFor="let object of getPaginatedObjects(); trackBy: rowsTrackByFn"
+          (click)="wholeRowSelection ? onSelectUnselectSingle(object) : onObjectClicked(object)"
+        >
           <ng-container *ngFor="let property of getObjectEnumeratedProperties(object)">
             <ng-container *ngIf="property.tableHeader.dataType !== dataType.Template">
               <td [innerHTML]="property.property | safeHtml"></td>
@@ -65,12 +71,12 @@
     </div>
   </ng-container>
   <ng-container *ngIf="mobile">
-    <swiper (sliderMove)="equalizeMobileRowsContainersScrolls()">
-      <div class="responsive-table-mobile" *ngFor="let tableHeader of tableHeaders; let i = index">
-        <div #mobileHeader class="responsive-table-mobile-row" [style.padding-right]="'calc(10px + ' + calculatePaddingRight() + 'px)'"  (click)="sort(tableHeader, i)">
+    <swiper (sliderMove)="onSliderMove()">
+      <div class="responsive-table-mobile" *ngFor="let tableHeader of tableHeaders; let i = index; trackBy: headersTrackByFn">
+        <div #mobileHeader class="responsive-table-mobile-row" [style.padding-right]="'calc(10px + ' + paddingRight + 'px)'" (click)="tableHeader.dataType !== dataType.Template ? sort(tableHeader, i) : undefined">
           <div class="responsive-table-mobile-row-content">
             <strong>{{ tableHeader.title }}</strong>
-            <div class="responsive-flex-wrapper">
+            <div class="responsive-flex-wrapper" *ngIf="tableHeader.dataType !== dataType.Template">
               <i class="material-icons">{{ !ascendingByTableHeaderIndex[i] ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</i>
             </div>
           </div>
@@ -83,7 +89,7 @@
           <div
             #mobileRow
             class="responsive-table-mobile-row responsive-table-mobile-row-colored"
-            *ngFor="let object of getPaginatedObjects()"
+            *ngFor="let object of getPaginatedObjects(); trackBy: rowsTrackByFn"
             (click)="wholeRowSelection ? onMobileObjectRowClick($event, object) : onObjectClicked(object)"
           >
             <ng-container *ngIf="tableHeader.dataType !== dataType.Template">
