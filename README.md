@@ -11,9 +11,11 @@ everything one could want from a table - you have pagination, sorting, search, s
 * you can pass in a template to be rendered by header and the ngOutletContext object for the template would be the actual row object - see how we pass a template in the app.component.html and app.component.ts (notice ViewChild static true - the other approach would be to just pass the template through the html - I personally like keeping inputs in the ts)
 
 ### Desktop
-![alt text](./desktop.png)
+![alt text](./responsiveTableDesktop.png)
 
 ### Mobile
-![alt text](./mobile1.png)
+![alt text](./responsiveTableMobile1.png)
 
-![alt text](./mobile2.png)
+![alt text](./responsiveTableMobile2.png)
+
+![alt text](./responsiveTableMobile3.png)
