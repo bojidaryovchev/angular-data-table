@@ -123,6 +123,7 @@
 
     td {
       padding: 6px 10px;
+      word-break: break-word;
 
       &:not(:last-child) {
         border-right: 1px solid #e0e0e0;
