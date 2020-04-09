@@ -414,6 +414,9 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     this.page = 1;
 
     this.changeDetectorRef.detectChanges();
+
+    this.handleMobileHeadersHeights();
+    this.handleMobileRowsHeights();
   }
 
   private equalizeMobileRowsAdjacentContainersScrolls() {
@@ -473,24 +476,20 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       return;
     }
 
-    if (this.filteredObjects.length < this.objectsPerPage) {
-      return;
-    }
-
     const mobileRows: HTMLElement[] = this.mobileRows.toArray().map((mobileRow) => mobileRow.nativeElement);
 
     mobileRows.forEach((row) => (row.style.height = null));
 
-    for (let i = 0; i < this.objectsPerPage; i++) {
+    let totalPages = Math.floor(this._originalObjects.length / this.objectsPerPage);
+    let objectsPerPage = this.page <= totalPages ? this.objectsPerPage : this._originalObjects.length - totalPages * this.objectsPerPage;
+
+    objectsPerPage = this.filteredObjects.length < objectsPerPage ? this.filteredObjects.length : objectsPerPage;
+
+    for (let i = 0; i < objectsPerPage; i++) {
       let highest = 0;
 
       for (let page = 0; page < this.tableHeaders.length; page++) {
-        const mobileRow = mobileRows[this.objectsPerPage * page + i];
-
-        if (!mobileRow) {
-          continue;
-        }
-
+        const mobileRow = mobileRows[objectsPerPage * page + i];
         const height = mobileRow.getBoundingClientRect().height;
 
         if (height > highest) {
@@ -499,11 +498,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       }
 
       for (let page = 0; page < this.tableHeaders.length; page++) {
-        const mobileRow = mobileRows[this.objectsPerPage * page + i];
-
-        if (!mobileRow) {
-          continue;
-        }
+        const mobileRow = mobileRows[objectsPerPage * page + i];
 
         mobileRow.style.height = `${highest}px`;
       }
