@@ -166,6 +166,8 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   onResized(): void {
     this.changeDetectorRef.detectChanges();
 
+    this.swiper.directiveRef.update();
+
     this.handleMobileHeadersHeights();
     this.handleMobileRowsHeights();
   }
