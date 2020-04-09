@@ -45,6 +45,7 @@ export class TableHeader {
 export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewInit, AfterViewChecked, OnDestroy {
   private readonly _mobileWidth: number = 576;
   private readonly _debounceTime: number = 500;
+  private readonly _resizeDebounceTime: number = 100;
   private readonly _defaultObjectsPerPage: number = 10;
 
   private _originalObjects: object[];
@@ -59,6 +60,8 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       this._originalObjects = [];
     }
   }
+  // the objects that are currently selected
+  @Input() selectedObjects: object[] = [];
   // the table headers you want to display
   @Input() tableHeaders: TableHeader[];
   // whether or not to show checkboxes
@@ -70,8 +73,9 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   // by default you can select an object by clicking anywhere in the row
   // if disabled you will be able to select only by clicking the checkbox
   @Input() wholeRowSelection: boolean = true;
-  // the objects that are currently selected
-  @Input() selectedObjects: object[] = [];
+  // if enabled the responsive table container will have 100% height
+  // making it occupy the parent space and have its own scrollable container
+  @Input() adoptParentHeight: boolean = true;
 
   // emits an array of the selected objects
   @Output() objectsSelected: EventEmitter<object[]> = new EventEmitter();
@@ -91,6 +95,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   page: number = 1;
   searchSubject: Subject<string> = new Subject();
   dataType = DataType;
+  resizeSubject: Subject<void> = new Subject();
   subscriptions: Subscription[] = [];
 
   constructor(private readonly changeDetectorRef: ChangeDetectorRef) {
@@ -99,6 +104,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
   ngOnInit() {
     this.initSearchSubject();
+    this.initResizeSubject();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -113,14 +119,14 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     if (changes['tableHeaders']) {
       return;
     }
-    
+
     this.changeDetectorRef.detectChanges();
   }
 
   ngAfterViewInit() {
     this.changeDetectorRef.detectChanges();
 
-    this.onResized();
+    this.resizeHandler();
   }
 
   ngAfterViewChecked() {
@@ -167,7 +173,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     return this.swiper.directiveRef.getIndex();
   }
 
-  onResized(): void {
+  resizeHandler() {
     this.changeDetectorRef.detectChanges();
 
     if (this.swiper) {
@@ -176,6 +182,10 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
     this.handleMobileHeadersHeights();
     this.handleMobileRowsHeights();
+  }
+
+  onResized(): void {
+    this.resizeSubject.next();
   }
 
   sort(tableHeader: TableHeader, tableHeaderIndex: number): void {
@@ -381,6 +391,14 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     );
   }
 
+  private initResizeSubject(): void {
+    this.subscriptions.push(
+      this.resizeSubject.pipe(debounceTime(this._resizeDebounceTime)).subscribe(() => {
+        this.resizeHandler();
+      })
+    );
+  }
+
   private executeSearch(value: string) {
     if (!value) {
       this.filteredObjects = this._originalObjects.slice();
@@ -455,7 +473,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       return;
     }
 
-    if (this.filteredObjects.length <= this.objectsPerPage) {
+    if (this.filteredObjects.length < this.objectsPerPage) {
       return;
     }
 
@@ -463,14 +481,17 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
     mobileRows.forEach((row) => (row.style.height = null));
 
-    const totalPages = Math.floor(this._originalObjects.length / this.objectsPerPage);
-    const objectsPerPage = this.page <= totalPages ? this.objectsPerPage : this._originalObjects.length - totalPages * this.objectsPerPage;
-
-    for (let i = 0; i < objectsPerPage; i++) {
+    for (let i = 0; i < this.objectsPerPage; i++) {
       let highest = 0;
 
       for (let page = 0; page < this.tableHeaders.length; page++) {
-        const height = mobileRows[objectsPerPage * page + i].getBoundingClientRect().height;
+        const mobileRow = mobileRows[this.objectsPerPage * page + i];
+
+        if (!mobileRow) {
+          continue;
+        }
+
+        const height = mobileRow.getBoundingClientRect().height;
 
         if (height > highest) {
           highest = height;
@@ -478,9 +499,13 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       }
 
       for (let page = 0; page < this.tableHeaders.length; page++) {
-        const element = mobileRows[objectsPerPage * page + i];
+        const mobileRow = mobileRows[this.objectsPerPage * page + i];
 
-        element.style.height = `${highest}px`;
+        if (!mobileRow) {
+          continue;
+        }
+
+        mobileRow.style.height = `${highest}px`;
       }
     }
   }

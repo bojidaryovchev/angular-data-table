@@ -2,11 +2,11 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 100%;
 
   .responsive-table-search {
     padding: 10px;
     border-bottom: 1px solid #e0e0e0;
+    border-top: 1px solid #e0e0e0;
 
     .responsive-table-search-input {
       position: relative;
@@ -69,7 +69,7 @@
     z-index: 1;
 
     .responsive-table-header {
-      min-width: 90px;
+      min-width: 48px;
       font-weight: 600;
       padding: 0 10px;
       border-bottom: 1px solid #e0e0e0;
@@ -102,7 +102,7 @@
     }
 
     th {
-      min-width: 90px;
+      min-width: 48px;
       white-space: nowrap;
       height: 42px;
       padding: 0 10px;
@@ -113,11 +113,7 @@
       }
     }
 
-    tr:nth-child(even) {
-      background: #e0e0e040;
-    }
-
-    tr {
+    tr:not(:last-child) {
       border-bottom: 1px solid #e0e0e0;
     }
 
@@ -155,8 +151,8 @@
       display: flex;
       padding: 10px;
 
-      &.responsive-table-mobile-row-colored:nth-child(even) {
-        background: #e0e0e040;
+      &:not(:last-child) {
+        border-bottom: 1px solid #e0e0e0;
       }
 
       .responsive-table-mobile-row-content {
@@ -176,5 +172,6 @@
   app-pagination {
     padding: 10px;
     border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
   }
 }
