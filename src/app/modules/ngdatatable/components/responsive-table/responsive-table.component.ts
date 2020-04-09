@@ -45,7 +45,7 @@ export class TableHeader {
 export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewInit, AfterViewChecked, OnDestroy {
   private readonly _mobileWidth: number = 576;
   private readonly _debounceTime: number = 500;
-  private readonly _defaultObjectsPerPage: number = 20;
+  private readonly _defaultObjectsPerPage: number = 10;
 
   private _originalObjects: object[];
 
@@ -110,6 +110,10 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       this.handleSelectedObjects();
     }
 
+    if (changes['tableHeaders']) {
+      return;
+    }
+    
     this.changeDetectorRef.detectChanges();
   }
 
@@ -166,7 +170,9 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   onResized(): void {
     this.changeDetectorRef.detectChanges();
 
-    this.swiper.directiveRef.update();
+    if (this.swiper) {
+      this.swiper.directiveRef.update();
+    }
 
     this.handleMobileHeadersHeights();
     this.handleMobileRowsHeights();
