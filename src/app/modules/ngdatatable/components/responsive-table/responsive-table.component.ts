@@ -190,7 +190,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   getValue(tableHeader: TableHeader, object: object): string {
-    return object[tableHeader.property] || tableHeader.propertyFunction(object);
+    return tableHeader.property ? object[tableHeader.property] : tableHeader.propertyFunction(object);
   }
 
   sort(tableHeader: TableHeader, tableHeaderIndex: number): void {
