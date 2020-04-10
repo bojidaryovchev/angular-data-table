@@ -6,7 +6,9 @@ everything one could want from a table - you have pagination, sorting, search, s
 
 * a note about the sorting - we have to provide a DataType per column header and then that DataType is used to select a proper comparison function - so naturally the supported data types are String, Number, Date (a normal Date object or an ISO string), Boolean and Template - the templates cannot be sorted - you can take a look inside the code to see how that is implemented
 
-* you can pass in a template to be rendered by header and the ngOutletContext object for the template would be the actual row object - see app.component for an example
+* you can pass in a template to be rendered by header and the ngOutletContext object for the template would be the actual row object wrapped in an object so that we can access the whole object if we need to (e.g. to bind it to ngModel) - see app.component for an example
+
+* currently when ngOnChanges triggers it doesn't invoke the handleMobileHeadersHeights() and handleMobileRowsHeights() functions because it causes a bottleneck as we swipe - so if lets say you have passed a header with DataType.String and you change it to DataType.Template so it occupies more space the rows heights won't be updated properly - you need to do that yourself - in order to do it just create a @ViewChild(ResponsiveTableComponent) responsiveTableComponent: ResponsiveTableComponent; and then you can call this.responsiveTableComponent.onResized(); to update the heights manually - the onResized() function internally does exactly that
 
 * you can pass in a propertyFunction instead of a property - that is a function which accepts an object and returns a string - so that the values in the tables are fully customizable (you can implement any custom logic easily in that function)
 
