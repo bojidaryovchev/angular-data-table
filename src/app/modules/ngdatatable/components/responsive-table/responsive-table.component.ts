@@ -12,6 +12,7 @@ import {
   OnInit,
   Output,
   QueryList,
+  SimpleChange,
   SimpleChanges,
   TemplateRef,
   ViewChild,
@@ -118,7 +119,25 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     }
 
     if (changes['tableHeaders']) {
-      return;
+      const change: SimpleChange = changes['tableHeaders'];
+
+      if (change.previousValue && change.currentValue) {
+        if (change.previousValue.length === change.currentValue.length) {
+          let objectsDiffer = false;
+
+          for (let index = 0; index < change.previousValue.length; index++) {
+            objectsDiffer = !!Object.keys(change.previousValue[index]).find(k => change.previousValue[index][k] !== change.currentValue[index][k]);
+            
+            if (objectsDiffer) {
+              break;
+            }
+          }
+
+          if (!objectsDiffer) {
+            return;
+          }
+        }
+      }
     }
 
     this.changeDetectorRef.detectChanges();
