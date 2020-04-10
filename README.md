@@ -6,7 +6,7 @@ everything one could want from a table - you have pagination, sorting, search, s
 
 * a note about the sorting - we have to provide a DataType per column header and then that DataType is used to select a proper comparison function - so naturally the supported data types are String, Number, Date (a normal Date object or an ISO string), Boolean and Template - the templates cannot be sorted - you can take a look inside the code to see how that is implemented
 
-* you can pass in a template to be rendered by header and the ngOutletContext object for the template would be the actual row object - see how we pass a template in the app.component.html and app.component.ts (notice ViewChild static true - the other approach would be to just pass the template through the html - I personally like keeping inputs in the ts)
+* you can pass in a template to be rendered by header and the ngOutletContext object for the template would be the actual row object - see app.component for an example
 
 * you can pass in a propertyFunction instead of a property - that is a function which accepts an object and returns a string - so that the values in the tables are fully customizable (you can implement any custom logic easily in that function)
 
