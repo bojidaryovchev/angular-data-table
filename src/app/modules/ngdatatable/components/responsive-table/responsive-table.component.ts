@@ -34,6 +34,7 @@ export class TableHeader {
   dataType: DataType;
   property?: string;
   template?: TemplateRef<ElementRef<HTMLElement>>;
+  propertyFunction?: (object: object) => string;
 }
 
 @Component({
@@ -188,39 +189,46 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     this.resizeSubject.next();
   }
 
+  getValue(tableHeader: TableHeader, object: object): string {
+    return object[tableHeader.property] || tableHeader.propertyFunction(object);
+  }
+
   sort(tableHeader: TableHeader, tableHeaderIndex: number): void {
     let equalityPredicate: (a: object, b: object) => number;
+    let getValue: (object: object) => string = (object) => {
+      return this.getValue(tableHeader, object);
+    };
 
     switch (tableHeader.dataType) {
       case DataType.String:
         if (!this.ascendingByTableHeaderIndex[tableHeaderIndex]) {
-          equalityPredicate = (a: object, b: object) => b[tableHeader.property].localeCompare(a[tableHeader.property]);
+          equalityPredicate = (a: object, b: object) => getValue(b).localeCompare(getValue(a));
         } else {
-          equalityPredicate = (a: object, b: object) => a[tableHeader.property].localeCompare(b[tableHeader.property]);
+          equalityPredicate = (a: object, b: object) => getValue(a).localeCompare(getValue(b));
         }
 
         break;
       case DataType.Number:
         if (!this.ascendingByTableHeaderIndex[tableHeaderIndex]) {
-          equalityPredicate = (a: object, b: object) => +b[tableHeader.property] - +a[tableHeader.property];
+          equalityPredicate = (a: object, b: object) => +getValue(b) - +getValue(a);
         } else {
-          equalityPredicate = (a: object, b: object) => +a[tableHeader.property] - +b[tableHeader.property];
+          equalityPredicate = (a: object, b: object) => +getValue(a) - +getValue(b);
         }
 
         break;
       case DataType.Date:
         if (!this.ascendingByTableHeaderIndex[tableHeaderIndex]) {
-          equalityPredicate = (a: object, b: object) => new Date(b[tableHeader.property]).getTime() - new Date(a[tableHeader.property]).getTime();
+          equalityPredicate = (a: object, b: object) => new Date(getValue(b)).getTime() - new Date(getValue(a)).getTime();
         } else {
-          equalityPredicate = (a: object, b: object) => new Date(a[tableHeader.property]).getTime() - new Date(b[tableHeader.property]).getTime();
+          equalityPredicate = (a: object, b: object) => new Date(getValue(b)).getTime() - new Date(getValue(a)).getTime();
         }
 
         break;
       case DataType.Boolean:
         if (!this.ascendingByTableHeaderIndex[tableHeaderIndex]) {
-          equalityPredicate = (a: object, b: object) => +b[tableHeader.property] - +a[tableHeader.property];
+          equalityPredicate = (a: object, b: object) => +getValue(b) - +getValue(a);
         } else {
-          equalityPredicate = (a: object, b: object) => +a[tableHeader.property] - +b[tableHeader.property];
+          equalityPredicate = (a: object, b: object) => +getValue(a) - +getValue(b);
         }
 
         break;

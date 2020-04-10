@@ -54,7 +54,7 @@
         >
           <ng-container *ngFor="let property of getObjectEnumeratedProperties(object)">
             <ng-container *ngIf="property.tableHeader.dataType !== dataType.Template">
-              <td [innerHTML]="property.property | safeHtml"></td>
+              <td [innerHTML]="getValue(property.tableHeader, object) | safeHtml"></td>
             </ng-container>
             <ng-container *ngIf="property.tableHeader.dataType === dataType.Template">
               <td>
@@ -73,7 +73,12 @@
   <ng-container *ngIf="mobile">
     <swiper (sliderMove)="onSliderMove()">
       <div class="responsive-table-mobile" *ngFor="let tableHeader of tableHeaders; let i = index; trackBy: headersTrackByFn">
-        <div #mobileHeader class="responsive-table-mobile-row" [style.padding-right]="'calc(10px + ' + paddingRight + 'px)'" (click)="tableHeader.dataType !== dataType.Template ? sort(tableHeader, i) : undefined">
+        <div
+          #mobileHeader
+          class="responsive-table-mobile-row"
+          [style.padding-right]="'calc(10px + ' + paddingRight + 'px)'"
+          (click)="tableHeader.dataType !== dataType.Template ? sort(tableHeader, i) : undefined"
+        >
           <div class="responsive-table-mobile-row-content">
             <strong>{{ tableHeader.title }}</strong>
             <div class="responsive-flex-wrapper" *ngIf="tableHeader.dataType !== dataType.Template">
@@ -93,7 +98,7 @@
             (click)="wholeRowSelection ? onMobileObjectRowClick($event, object) : onObjectClicked(object)"
           >
             <ng-container *ngIf="tableHeader.dataType !== dataType.Template">
-              <div class="responsive-table-mobile-row-content" [innerHTML]="object[tableHeader.property] | safeHtml"></div>
+              <div class="responsive-table-mobile-row-content" [innerHTML]="getValue(tableHeader, object) | safeHtml"></div>
             </ng-container>
             <ng-container *ngIf="tableHeader.dataType === dataType.Template">
               <div class="responsive-table-mobile-row-content">
