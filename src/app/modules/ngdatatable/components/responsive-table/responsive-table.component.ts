@@ -118,28 +118,6 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       this.handleSelectedObjects();
     }
 
-    if (changes['tableHeaders']) {
-      const change: SimpleChange = changes['tableHeaders'];
-
-      if (change.previousValue && change.currentValue) {
-        if (change.previousValue.length === change.currentValue.length) {
-          let objectsDiffer = false;
-
-          for (let index = 0; index < change.previousValue.length; index++) {
-            objectsDiffer = !!Object.keys(change.previousValue[index]).find(k => change.previousValue[index][k] !== change.currentValue[index][k]);
-            
-            if (objectsDiffer) {
-              break;
-            }
-          }
-
-          if (!objectsDiffer) {
-            return;
-          }
-        }
-      }
-    }
-
     this.changeDetectorRef.detectChanges();
   }
 
@@ -267,15 +245,6 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
     this.handleMobileHeadersHeights();
     this.handleMobileRowsHeights();
-  }
-
-  getObjectEnumeratedProperties(object: object): { property: string; tableHeader: TableHeader }[] {
-    return this.tableHeaders.map((tableHeader) => {
-      return {
-        property: object[tableHeader.property],
-        tableHeader,
-      };
-    });
   }
 
   onSearch(value: string): void {

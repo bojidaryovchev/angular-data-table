@@ -52,13 +52,13 @@
           *ngFor="let object of getPaginatedObjects(); trackBy: rowsTrackByFn"
           (click)="wholeRowSelection ? onSelectUnselectSingle(object) : onObjectClicked(object)"
         >
-          <ng-container *ngFor="let property of getObjectEnumeratedProperties(object)">
-            <ng-container *ngIf="property.tableHeader.dataType !== dataType.Template">
-              <td [innerHTML]="getValue(property.tableHeader, object) | safeHtml"></td>
+          <ng-container *ngFor="let tableHeader of tableHeaders; trackBy: headersTrackByFn">
+            <ng-container *ngIf="tableHeader.dataType !== dataType.Template">
+              <td [innerHTML]="getValue(tableHeader, object) | safeHtml"></td>
             </ng-container>
-            <ng-container *ngIf="property.tableHeader.dataType === dataType.Template">
+            <ng-container *ngIf="tableHeader.dataType === dataType.Template">
               <td>
-                <ng-template [ngTemplateOutlet]="property.tableHeader.template" [ngTemplateOutletContext]="object"></ng-template>
+                <ng-template [ngTemplateOutlet]="tableHeader.template" [ngTemplateOutletContext]="object"></ng-template>
               </td>
             </ng-container>
           </ng-container>
