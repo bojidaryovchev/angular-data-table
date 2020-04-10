@@ -58,7 +58,7 @@
             </ng-container>
             <ng-container *ngIf="tableHeader.dataType === dataType.Template">
               <td>
-                <ng-template [ngTemplateOutlet]="tableHeader.template" [ngTemplateOutletContext]="object"></ng-template>
+                <ng-template [ngTemplateOutlet]="tableHeader.template" [ngTemplateOutletContext]="{ object: object }"></ng-template>
               </td>
             </ng-container>
           </ng-container>
@@ -102,7 +102,7 @@
             </ng-container>
             <ng-container *ngIf="tableHeader.dataType === dataType.Template">
               <div class="responsive-table-mobile-row-content">
-                <ng-template [ngTemplateOutlet]="tableHeader.template" [ngTemplateOutletContext]="object"></ng-template>
+                <ng-template [ngTemplateOutlet]="tableHeader.template" [ngTemplateOutletContext]="{ object: object }"></ng-template>
               </div>
             </ng-container>
 
