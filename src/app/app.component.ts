@@ -1,15 +1,20 @@
-import { Component, OnInit, ViewChild, TemplateRef, ElementRef } from '@angular/core';
-import { DataType, TableHeader } from './modules/ngdatatable/components/responsive-table/responsive-table.component';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { DataType, TableHeader, ResponsiveTableComponent } from './modules/ngdatatable/components/responsive-table/responsive-table.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
   @ViewChild('template', { static: true }) template: TemplateRef<ElementRef<HTMLElement>>;
+  @ViewChild(ResponsiveTableComponent) responsiveTableComponent: ResponsiveTableComponent; 
 
   tableObjects: object[];
+  useTemplate: boolean = true;
+
+  constructor(private readonly changeDetectorRef: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.tableObjects = this.initObjects(123456);
@@ -20,72 +25,95 @@ export class AppComponent implements OnInit {
       {
         title: 'Name and Surname and Something Very Long Blablabla',
         dataType: DataType.String,
-        property: 'name'
+        property: 'name',
       },
       {
         title: 'Age',
         dataType: DataType.Number,
-        property: 'age'
+        property: 'age',
       },
+      ...(this.useTemplate
+        ? [
+            {
+              title: 'Template',
+              dataType: DataType.Template,
+              template: this.template,
+            },
+          ]
+        : [
+            {
+              title: 'Template',
+              dataType: DataType.String,
+              property: 'age',
+            },
+          ]),
       {
-        title: 'Template',
-        dataType: DataType.Template,
-        template: this.template
+        dataType: DataType.Date,
+        title: 'Created',
+        property: 'created'
       },
       {
         title: 'Property A',
         dataType: DataType.Number,
-        property: 'a'
+        property: 'a',
       },
       {
         title: 'Property B',
         dataType: DataType.Number,
-        property: 'b'
+        property: 'b',
       },
       {
         title: 'Property C',
         dataType: DataType.Number,
-        property: 'c'
+        property: 'c',
       },
       {
         title: 'Property D',
         dataType: DataType.Number,
-        property: 'd'
+        property: 'd',
       },
       {
         title: 'Property E',
         dataType: DataType.Number,
-        property: 'e'
+        property: 'e',
       },
       {
         title: 'Property F',
         dataType: DataType.Number,
-        property: 'f'
+        property: 'f',
       },
       {
         title: 'Property G',
         dataType: DataType.Number,
-        property: 'g'
+        property: 'g',
       },
       {
         title: 'Property I',
         dataType: DataType.Number,
-        property: 'i'
+        property: 'i',
       },
       {
         title: 'Property J',
         dataType: DataType.Number,
-        property: 'j'
+        propertyFunction: object => {
+          return `Property Function ${object['j']}`;
+        },
       },
       {
         title: 'Property K',
         dataType: DataType.Number,
-        property: 'k'
-      }
+        property: 'k',
+      },
     ];
   }
 
-  private getRandomNumber = max => Math.floor(Math.random() * max);
+  onUseTemplate() {
+    this.useTemplate = !this.useTemplate;
+    this.changeDetectorRef.detectChanges();
+    this.responsiveTableComponent.resizeHandler();
+  }
+
+  private getRandomNumber = (max) => Math.floor(Math.random() * max);
   private getRandomColor = () => `rgb(${this.getRandomNumber(256)}, ${this.getRandomNumber(256)}, ${this.getRandomNumber(256)})`;
 
   private initObjects(count: number): object[] {
@@ -120,7 +148,7 @@ export class AppComponent implements OnInit {
         j: Math.floor(Math.random() * index),
         k: Math.floor(Math.random() * index),
         created: new Date(Math.floor(Math.random() * new Date().getTime())),
-        color: this.getRandomColor()
+        color: this.getRandomColor(),
       });
     }
 
