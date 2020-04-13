@@ -172,9 +172,12 @@
       .responsive-table-mobile-row-content {
         flex: 1;
         overflow: hidden;
-        display: flex;
-        align-items: center;
-        word-break: break-word;
+        
+        &:not(.responsive-table-mobile-row-content-template) {
+          display: flex;
+          align-items: center;
+          word-break: break-word;
+        }
       }
 
       .responsive-table-mobile-row-checkbox {

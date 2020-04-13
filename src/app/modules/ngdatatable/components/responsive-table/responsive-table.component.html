@@ -101,7 +101,7 @@
               <div class="responsive-table-mobile-row-content" [innerHTML]="getValue(tableHeader, object) | safeHtml"></div>
             </ng-container>
             <ng-container *ngIf="tableHeader.dataType === dataType.Template">
-              <div class="responsive-table-mobile-row-content">
+              <div class="responsive-table-mobile-row-content responsive-table-mobile-row-content-template">
                 <ng-template [ngTemplateOutlet]="tableHeader.template" [ngTemplateOutletContext]="{ object: object }"></ng-template>
               </div>
             </ng-container>
