@@ -186,14 +186,25 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     this.resizeSubject.next();
   }
 
-  getValue(tableHeader: TableHeader, object: object): string {
-    return tableHeader.property ? object[tableHeader.property] : tableHeader.propertyFunction(object);
+  getTableValue(tableHeader: TableHeader, object: object): string {
+    return tableHeader.propertyFunction ? tableHeader.propertyFunction(object) : object[tableHeader.property];
+  }
+
+  getSortValue(tableHeader: TableHeader, object: object): string {
+    // if there are both a property and a propertyFunction
+    // the propertyFunction result will be what is actually seen
+    // whereas the property result will be what is used for sorting
+    if (tableHeader.property && tableHeader.propertyFunction) {
+      return object[tableHeader.property];
+    }
+
+    return this.getTableValue(tableHeader, object);
   }
 
   sort(tableHeader: TableHeader, tableHeaderIndex: number): void {
     let equalityPredicate: (a: object, b: object) => number;
     let getValue: (object: object) => string = (object) => {
-      return this.getValue(tableHeader, object);
+      return this.getSortValue(tableHeader, object);
     };
 
     switch (tableHeader.dataType) {

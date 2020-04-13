@@ -54,7 +54,7 @@
         >
           <ng-container *ngFor="let tableHeader of tableHeaders; trackBy: headersTrackByFn">
             <ng-container *ngIf="tableHeader.dataType !== dataType.Template">
-              <td [innerHTML]="getValue(tableHeader, object) | safeHtml"></td>
+              <td [innerHTML]="getTableValue(tableHeader, object) | safeHtml"></td>
             </ng-container>
             <ng-container *ngIf="tableHeader.dataType === dataType.Template">
               <td>
@@ -98,7 +98,7 @@
             (click)="wholeRowSelection ? onMobileObjectRowClick($event, object) : onObjectClicked(object)"
           >
             <ng-container *ngIf="tableHeader.dataType !== dataType.Template">
-              <div class="responsive-table-mobile-row-content" [innerHTML]="getValue(tableHeader, object) | safeHtml"></div>
+              <div class="responsive-table-mobile-row-content" [innerHTML]="getTableValue(tableHeader, object) | safeHtml"></div>
             </ng-container>
             <ng-container *ngIf="tableHeader.dataType === dataType.Template">
               <div class="responsive-table-mobile-row-content responsive-table-mobile-row-content-template">
