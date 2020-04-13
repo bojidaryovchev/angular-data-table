@@ -217,7 +217,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
         if (!this.ascendingByTableHeaderIndex[tableHeaderIndex]) {
           equalityPredicate = (a: object, b: object) => new Date(getValue(b)).getTime() - new Date(getValue(a)).getTime();
         } else {
-          equalityPredicate = (a: object, b: object) => new Date(getValue(b)).getTime() - new Date(getValue(a)).getTime();
+          equalityPredicate = (a: object, b: object) => new Date(getValue(a)).getTime() - new Date(getValue(b)).getTime();
         }
 
         break;
