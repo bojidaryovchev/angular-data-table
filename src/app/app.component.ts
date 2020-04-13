@@ -47,10 +47,15 @@ export class AppComponent implements OnInit {
               property: 'age',
             },
           ]),
+      // notice here we are passing both a property and a propertyFunction
+      // the property will be used for sorting whereas the propertyFunction will be displayed
       {
         dataType: DataType.Date,
         title: 'Created',
-        property: 'created'
+        property: 'created',
+        propertyFunction: object => {
+          return 'lorem ipsum'
+        }
       },
       {
         title: 'Property A',
