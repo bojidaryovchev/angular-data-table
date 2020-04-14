@@ -12,6 +12,8 @@ everything one could want from a table - you have pagination, sorting, search, s
 
 * you can pass in a propertyFunction instead of a property - that is a function which accepts an object and returns a string - so that the values in the tables are fully customizable (you can implement any custom logic easily in that function)
 
+* if you pass both a property and a propertyFunction that means you want to use the property to sort by and use the propertyFunction for what is actually displayed (a perfect example would be having to deal with dates in ISO format and displaying them localized - you can have the dates displayed any way you like while still being able to sort them property in the table by their actual ISO strings)
+
 * if you are copying it make sure to check out styles.scss so that you don't end up wondering why it doesn't look properly
 
 ### Desktop
