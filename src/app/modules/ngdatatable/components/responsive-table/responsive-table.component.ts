@@ -242,7 +242,20 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
         break;
     }
 
-    this.filteredObjects.sort(equalityPredicate);
+    const truthyObjects = [];
+    const falsyObjects = [];
+
+    for (let index = 0; index < this.filteredObjects.length; index++) {
+      const object = this.filteredObjects[index];
+
+      if (getValue(object)) {
+        truthyObjects.push(object);
+      } else {
+        falsyObjects.push(object);
+      }
+    }
+
+    this.filteredObjects = truthyObjects.sort(equalityPredicate).concat(falsyObjects);;
 
     this.ascendingByTableHeaderIndex[tableHeaderIndex] = !this.ascendingByTableHeaderIndex[tableHeaderIndex];
 
