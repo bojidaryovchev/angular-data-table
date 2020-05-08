@@ -14,8 +14,10 @@ export class CheckboxComponent {
 
   onChecked(e: Event) {
     e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
+
+    if (this.disabled) {
+      return;
+    }
 
     this.checked.emit((this.isChecked = !this.isChecked));
   }

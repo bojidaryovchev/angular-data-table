@@ -12,7 +12,6 @@ import {
   OnInit,
   Output,
   QueryList,
-  SimpleChange,
   SimpleChanges,
   TemplateRef,
   ViewChild,
@@ -36,6 +35,7 @@ export class TableHeader {
   property?: string;
   template?: TemplateRef<ElementRef<HTMLElement>>;
   propertyFunction?: (object: object) => string;
+  style?: object;
 }
 
 @Component({
@@ -78,6 +78,11 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   // if enabled the responsive table container will have 100% height
   // making it occupy the parent space and have its own scrollable container
   @Input() adoptParentHeight: boolean = true;
+  // you can pass a custom search subject in case you want to have
+  // a separate search outside of the component
+  @Input() searchSubject: Subject<string> = new Subject();
+  // you can specify which properties should be searched
+  @Input() searchProperties: string[];
 
   // emits an array of the selected objects
   @Output() objectsSelected: EventEmitter<object[]> = new EventEmitter();
@@ -95,9 +100,9 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   filteredObjects: object[];
   ascendingByTableHeaderIndex: { [key: number]: boolean } = {};
   page: number = 1;
-  searchSubject: Subject<string> = new Subject();
   dataType = DataType;
   resizeSubject: Subject<void> = new Subject();
+  currentlySortedHeader: TableHeader;
   subscriptions: Subscription[] = [];
 
   constructor(private readonly changeDetectorRef: ChangeDetectorRef) {
@@ -171,6 +176,10 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     return this.swiper.directiveRef.getIndex();
   }
 
+  get totalPages(): number {
+    return Math.floor(this._originalObjects.length / this.objectsPerPage);
+  }
+
   resizeHandler() {
     this.changeDetectorRef.detectChanges();
 
@@ -202,6 +211,8 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   sort(tableHeader: TableHeader, tableHeaderIndex: number): void {
+    this.currentlySortedHeader = tableHeader;
+
     let equalityPredicate: (a: object, b: object) => number;
     let getValue: (object: object) => string = (object) => {
       return this.getSortValue(tableHeader, object);
@@ -255,7 +266,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       }
     }
 
-    this.filteredObjects = truthyObjects.sort(equalityPredicate).concat(falsyObjects);;
+    this.filteredObjects = truthyObjects.sort(equalityPredicate).concat(falsyObjects);
 
     this.ascendingByTableHeaderIndex[tableHeaderIndex] = !this.ascendingByTableHeaderIndex[tableHeaderIndex];
 
@@ -272,6 +283,8 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   onSearch(value: string): void {
+    this.changeDetectorRef.detectChanges();
+
     this.searchSubject.next(value);
   }
 
@@ -377,6 +390,14 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     }
   }
 
+  tableHeaderEqualsCurrentlySortedHeader(tableHeader: TableHeader): boolean {
+    if (!this.currentlySortedHeader) {
+      return;
+    }
+
+    return tableHeader.title === this.currentlySortedHeader.title;
+  }
+
   headersTrackByFn(index: number): number {
     return index;
   }
@@ -424,9 +445,9 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
       this.filteredObjects = this._originalObjects.slice();
     } else {
       this.filteredObjects = this._originalObjects.filter((o) => {
-        return Object.keys(o)
-          .map((k) => o[k])
-          .find((v) => `${v}`.toLowerCase().startsWith(value.toLowerCase()));
+        const values = this.searchProperties ? this.searchProperties.map((p) => o[p]) : Object.keys(o).map((k) => o[k]);
+
+        return values.find((v) => `${v}`.toLowerCase().startsWith(value.toLowerCase()));
       });
     }
 
@@ -501,8 +522,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
     mobileRows.forEach((row) => (row.style.height = null));
 
-    let totalPages = Math.floor(this._originalObjects.length / this.objectsPerPage);
-    let objectsPerPage = this.page <= totalPages ? this.objectsPerPage : this._originalObjects.length - totalPages * this.objectsPerPage;
+    let objectsPerPage = this.page <= this.totalPages ? this.objectsPerPage : this._originalObjects.length - this.totalPages * this.objectsPerPage;
 
     objectsPerPage = this.filteredObjects.length < objectsPerPage ? this.filteredObjects.length : objectsPerPage;
 
