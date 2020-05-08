@@ -1,4 +1,6 @@
-<button class="btn btn-success" (click)="onUseTemplate()">Template</button>
+<div>
+  <button class="btn btn-success" (click)="onUseTemplate()">Template</button>
+</div>
 
 <ng-template #template let-name="object.name">
   <button class="btn btn-primary" style="white-space: nowrap;">{{ name.substr(0, 20) }}</button>

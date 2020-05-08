@@ -1,0 +1,11 @@
+:host {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  app-responsive-table {
+    flex: 1;
+    overflow: hidden;
+    display: block;
+  }
+}
