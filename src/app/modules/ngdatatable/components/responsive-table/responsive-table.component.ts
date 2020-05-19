@@ -177,7 +177,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   get totalPages(): number {
-    return Math.floor(this._originalObjects.length / this.objectsPerPage);
+    return Math.ceil(this._originalObjects.length / this.objectsPerPage);
   }
 
   resizeHandler() {
@@ -284,7 +284,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
   onSearch(value: string): void {
     this.changeDetectorRef.detectChanges();
-
+    
     this.searchSubject.next(value);
   }
 
@@ -351,7 +351,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     }
 
     this.changeDetectorRef.detectChanges();
-
+    
     this.objectsSelected.emit(this.selectedObjects);
   }
 
@@ -440,14 +440,14 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
     );
   }
 
-  private executeSearch(value: string) {
+  executeSearch(value: string) {
     if (!value) {
       this.filteredObjects = this._originalObjects.slice();
     } else {
       this.filteredObjects = this._originalObjects.filter((o) => {
         const values = this.searchProperties ? this.searchProperties.map((p) => o[p]) : Object.keys(o).map((k) => o[k]);
 
-        return values.find((v) => `${v}`.toLowerCase().startsWith(value.toLowerCase()));
+        return values.find((v) => `${v}`.toLowerCase().indexOf(value.toLowerCase()) !== -1);
       });
     }
 
@@ -522,7 +522,7 @@ export class ResponsiveTableComponent implements OnInit, OnChanges, AfterViewIni
 
     mobileRows.forEach((row) => (row.style.height = null));
 
-    let objectsPerPage = this.page <= this.totalPages ? this.objectsPerPage : this._originalObjects.length - this.totalPages * this.objectsPerPage;
+    let objectsPerPage = this.page < this.totalPages ? this.objectsPerPage : this._originalObjects.length - this.totalPages * this.objectsPerPage;
 
     objectsPerPage = this.filteredObjects.length < objectsPerPage ? this.filteredObjects.length : objectsPerPage;
 
